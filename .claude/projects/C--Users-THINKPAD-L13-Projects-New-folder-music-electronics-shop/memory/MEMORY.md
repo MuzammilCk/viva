@@ -1,0 +1,2 @@
+- [Repo root is outer, not subdir](repo-root-is-outer.md) — live app + index.css are at the outer root; the music-electronics-shop/ subdir is an orphan; repo is not git
+- [Phase 2 3D direction](phase2-3d-fidelity-direction.md) — cybernetic-matched stylized fidelity + interactive now (knob/key/fader callbacks); drives Phase 2 & 5
