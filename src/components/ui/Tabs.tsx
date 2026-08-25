@@ -1,154 +1,82 @@
-import { forwardRef, type HTMLAttributes, useState, createContext, useContext } from "react"
+"use client"
+
+import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"
+import { cva, type VariantProps } from "class-variance-authority"
+
 import { cn } from "@/lib/utils"
 
-interface TabsContextType {
-  value: string
-  onValueChange: (value: string) => void
-}
-
-const TabsContext = createContext<TabsContextType | undefined>(undefined)
-
-function useTabsContext() {
-  const context = useContext(TabsContext)
-  if (!context) {
-    throw new Error("Tabs components must be used within Tabs")
-  }
-  return context
-}
-
-interface TabsProps {
-  value: string
-  onValueChange: (value: string) => void
-  children: React.ReactNode
-  className?: string
-  defaultValue?: string
-  orientation?: "horizontal" | "vertical"
-}
-
-export function Tabs({ value, onValueChange, children, className, defaultValue, orientation = "horizontal" }: TabsProps) {
-  const [internalValue, setInternalValue] = useState(value || defaultValue || "")
-  const controlled = value !== undefined
-
-  const currentValue = controlled ? value : internalValue
-  const handleChange = (newValue: string) => {
-    if (!controlled) setInternalValue(newValue)
-    onValueChange(newValue)
-  }
-
+function Tabs({
+  className,
+  orientation = "horizontal",
+  ...props
+}: TabsPrimitive.Root.Props) {
   return (
-    <TabsContext.Provider value={{ value: currentValue, onValueChange: handleChange }}>
-      <div className={cn(className)} data-orientation={orientation}>
-        {children}
-      </div>
-    </TabsContext.Provider>
-  )
-}
-
-interface TabsListProps extends HTMLAttributes<HTMLDivElement> {}
-
-export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(
-  ({ className, children, ...props }, ref) => (
-    <div
-      ref={ref}
+    <TabsPrimitive.Root
+      data-slot="tabs"
+      data-orientation={orientation}
       className={cn(
-        "glass-strong inline-flex items-center justify-center gap-1 p-1 rounded-full",
+        "group/tabs flex gap-2 data-horizontal:flex-col",
         className
       )}
-      role="tablist"
       {...props}
-    >
-      {children}
-    </div>
+    />
   )
-)
-
-TabsList.displayName = "TabsList"
-
-interface TabsTriggerProps extends HTMLAttributes<HTMLButtonElement> {
-  value: string
-  disabled?: boolean
 }
 
-export const TabsTrigger = forwardRef<HTMLButtonElement, TabsTriggerProps>(
-  ({ className, value, disabled = false, children, ...props }, ref) => {
-    const { value: currentValue, onValueChange } = useTabsContext()
-    const isActive = currentValue === value
-
-    return (
-      <button
-        ref={ref}
-        role="tab"
-        aria-selected={isActive}
-        aria-disabled={disabled}
-        data-state={isActive ? "active" : "inactive"}
-        data-disabled={disabled}
-        onClick={() => !disabled && onValueChange(value)}
-        className={cn(
-          "group/trigger relative inline-flex items-center justify-center gap-2 px-4 py-2",
-          "text-sm font-medium rounded-full whitespace-nowrap select-none",
-          "transition-[color,background-color,box-shadow,border-color,transform] duration-150",
-          "ease-[cubic-bezier(0.16,1,0.3,1)]",
-          "focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[var(--color-focus-ring)] focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]",
-          disabled
-            ? "opacity-50 cursor-not-allowed"
-            : isActive
-            ? "text-[var(--color-fg-primary)] bg-[var(--color-accent-cyan)]/[0.12] shadow-[inset_0_0_0_1px_var(--color-accent-cyan),var(--shadow-glow-cyan)] hover:-translate-y-px"
-            : "text-[var(--color-fg-secondary)] hover:text-[var(--color-fg-primary)] hover:bg-[var(--color-bg-secondary)]/40",
-          className
-        )}
-        {...props}
-      >
-        <span className="relative z-10 inline-flex items-center gap-2">{children}</span>
-        {/* Animated active indicator — dependency-free cyan underline that follows the active tab */}
-        <span
-          aria-hidden="true"
-          className={cn(
-            "pointer-events-none absolute inset-x-2 bottom-0 h-px rounded-full",
-            "bg-[var(--color-accent-cyan)]",
-            "transition-[opacity,transform,scaleX] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]",
-            "origin-center -translate-y-px",
-            isActive && !disabled
-              ? "opacity-100 scale-x-100 shadow-[0_0_8px_var(--color-accent-cyan)]"
-              : "opacity-0 scale-x-50"
-          )}
-        />
-      </button>
-    )
+const tabsListVariants = cva(
+  "group/tabs-list inline-flex w-fit items-center justify-center rounded-lg p-[3px] text-muted-foreground group-data-horizontal/tabs:h-8 group-data-vertical/tabs:h-fit group-data-vertical/tabs:flex-col data-[variant=line]:rounded-none",
+  {
+    variants: {
+      variant: {
+        default: "bg-muted",
+        line: "gap-1 bg-transparent",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
   }
 )
 
-TabsTrigger.displayName = "TabsTrigger"
-
-interface TabsContentProps extends HTMLAttributes<HTMLDivElement> {
-  value: string
-  forceMount?: boolean
+function TabsList({
+  className,
+  variant = "default",
+  ...props
+}: TabsPrimitive.List.Props & VariantProps<typeof tabsListVariants>) {
+  return (
+    <TabsPrimitive.List
+      data-slot="tabs-list"
+      data-variant={variant}
+      className={cn(tabsListVariants({ variant }), className)}
+      {...props}
+    />
+  )
 }
 
-export const TabsContent = forwardRef<HTMLDivElement, TabsContentProps>(
-  ({ className, value, forceMount = false, children, ...props }, ref) => {
-    const { value: currentValue } = useTabsContext()
-    const isActive = currentValue === value
+function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
+  return (
+    <TabsPrimitive.Tab
+      data-slot="tabs-trigger"
+      className={cn(
+        "relative inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-1.5 py-0.5 text-sm font-medium whitespace-nowrap text-foreground/60 transition-all group-data-vertical/tabs:w-full group-data-vertical/tabs:justify-start hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50 has-data-[icon=inline-end]:pr-1 has-data-[icon=inline-start]:pl-1 aria-disabled:pointer-events-none aria-disabled:opacity-50 dark:text-muted-foreground dark:hover:text-foreground group-data-[variant=default]/tabs-list:data-active:shadow-sm group-data-[variant=line]/tabs-list:data-active:shadow-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "group-data-[variant=line]/tabs-list:bg-transparent group-data-[variant=line]/tabs-list:data-active:bg-transparent dark:group-data-[variant=line]/tabs-list:data-active:border-transparent dark:group-data-[variant=line]/tabs-list:data-active:bg-transparent",
+        "data-active:bg-background data-active:text-foreground dark:data-active:border-input dark:data-active:bg-input/30 dark:data-active:text-foreground",
+        "after:absolute after:bg-foreground after:opacity-0 after:transition-opacity group-data-horizontal/tabs:after:inset-x-0 group-data-horizontal/tabs:after:bottom-[-5px] group-data-horizontal/tabs:after:h-0.5 group-data-vertical/tabs:after:inset-y-0 group-data-vertical/tabs:after:-right-1 group-data-vertical/tabs:after:w-0.5 group-data-[variant=line]/tabs-list:data-active:after:opacity-100",
+        className
+      )}
+      {...props}
+    />
+  )
+}
 
-    if (!forceMount && !isActive) return null
+function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
+  return (
+    <TabsPrimitive.Panel
+      data-slot="tabs-content"
+      className={cn("flex-1 text-sm outline-none", className)}
+      {...props}
+    />
+  )
+}
 
-    return (
-      <div
-        ref={ref}
-        role="tabpanel"
-        aria-labelledby={`tabs-trigger-${value}`}
-        data-state={isActive ? "active" : "inactive"}
-        data-value={value}
-        className={cn(
-          "mt-4 font-[var(--font-body)] animate-fade-in",
-          "focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[var(--color-focus-ring)] focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]",
-          className
-        )}
-        {...props}
-      >
-        {children}
-      </div>
-    )
-  }
-)
-
-TabsContent.displayName = "TabsContent"
+export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants }

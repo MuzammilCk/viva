@@ -1,117 +1,61 @@
 import { useState } from "react"
-import { Mail, ArrowRight, Check, Loader2 } from "lucide-react"
-import { Button } from "@/components/ui/Button"
-import { Input } from "@/components/ui/Input"
-import { useUIStore } from "@/store/uiStore"
+import { toast } from "sonner"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 export function NewsletterSection() {
   const [email, setEmail] = useState("")
-  const [submitting, setSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
-  const { addToast } = useUIStore()
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!email || submitting) return
-
-    setSubmitting(true)
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      setSubmitted(true)
-      setEmail("")
-      addToast({
-        type: "success",
-        title: "Welcome aboard!",
-        description: "You'll receive our next newsletter soon.",
-      })
-    } catch {
-      addToast({
-        type: "error",
-        title: "Something went wrong",
-        description: "Please try again later.",
-      })
-    } finally {
-      setSubmitting(false)
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("Please enter a valid email address.")
+      return
     }
-  }
-
-  if (submitted) {
-    return (
-      <section className="py-20 lg:py-28" aria-labelledby="newsletter-heading">
-        <div className="container">
-          <div className="max-w-xl mx-auto text-center">
-            <div className="w-20 h-20 rounded-full bg-[var(--color-success)]/20 flex items-center justify-center mx-auto mb-6">
-              <Check className="w-10 h-10 text-[var(--color-success)]" />
-            </div>
-            <h2 id="newsletter-heading" className="font-display font-bold text-3xl lg:text-4xl text-[var(--color-fg-primary)] mb-3">
-              You're subscribed!
-            </h2>
-            <p className="text-[var(--color-fg-secondary)] mb-6">
-              Thanks for joining the SynthLab community. Check your inbox for a welcome email.
-            </p>
-            <Button variant="ghost" onClick={() => setSubmitted(false)}>
-              Subscribe another email
-            </Button>
-          </div>
-        </div>
-      </section>
-    )
+    setError(null)
+    setEmail("")
+    toast.success("You're on the list", {
+      description: "New gear drops and patch ideas, straight to your inbox.",
+    })
   }
 
   return (
-    <section className="py-20 lg:py-28 bg-[var(--color-bg-secondary)] border-y border-[var(--color-border-subtle)]" aria-labelledby="newsletter-heading">
-      <div className="container">
-        <div className="max-w-2xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-[var(--color-accent-cyan)]/10 text-[var(--color-accent-cyan)] px-4 py-2 rounded-full text-sm font-medium mb-4">
-            <Mail className="w-4 h-4" />
-            <span>Newsletter</span>
-          </div>
-
-          <h2 id="newsletter-heading" className="font-display font-bold text-3xl lg:text-4xl text-[var(--color-fg-primary)] mb-4">
-            Stay in the loop
+    <section aria-labelledby="newsletter-heading" className="border-b bg-primary text-primary-foreground">
+      <div className="container-page grid items-center gap-8 py-14 lg:grid-cols-2">
+        <div className="flex flex-col gap-2">
+          <h2 id="newsletter-heading" className="font-display text-3xl tracking-tight sm:text-4xl">
+            New gear. First dibs.
           </h2>
-
-          <p className="text-[var(--color-fg-secondary)] mb-8 max-w-md mx-auto">
-            Get the latest synth news, tutorials, exclusive offers, and new arrivals
-            delivered to your inbox. No spam, unsubscribe anytime.
-          </p>
-
-          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-            <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              className="flex-1"
-              disabled={submitting}
-              required
-              aria-label="Email address"
-            />
-            <Button
-              type="submit"
-              size="lg"
-              disabled={submitting || !email}
-              className="sm:w-auto flex-shrink-0"
-            >
-              {submitting ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  <span>Subscribing...</span>
-                </>
-              ) : (
-                <>
-                  Subscribe
-                  <ArrowRight className="w-5 h-5" />
-                </>
-              )}
-            </Button>
-          </form>
-
-          <p className="mt-4 text-xs text-[var(--color-fg-muted)]">
-            By subscribing, you agree to our <a href="/privacy" className="underline hover:text-[var(--color-accent-cyan)]">Privacy Policy</a>.
+          <p className="max-w-md text-sm leading-relaxed opacity-80">
+            One email a week: new arrivals, restocks and the occasional patch tutorial.
+            No spam — unsubscribe anytime.
           </p>
         </div>
+        <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-2">
+          <div className="flex gap-2">
+            <label htmlFor="newsletter-email" className="sr-only">
+              Email address
+            </label>
+            <Input
+              id="newsletter-email"
+              type="email"
+              placeholder="you@studio.com"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              aria-invalid={Boolean(error)}
+              className="border-transparent bg-background text-foreground placeholder:text-muted-foreground"
+            />
+            <Button type="submit" variant="secondary" className="shrink-0">
+              Subscribe
+            </Button>
+          </div>
+          {error && (
+            <p role="alert" className="text-xs font-medium">
+              {error}
+            </p>
+          )}
+        </form>
       </div>
     </section>
   )

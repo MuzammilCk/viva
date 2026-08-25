@@ -30,13 +30,10 @@ export default defineConfig({
       output: {
         manualChunks: (id: string) => {
           if (id.includes('node_modules')) {
-            if (id.includes('three') || id.includes('@react-three/fiber') || id.includes('@react-three/drei') || id.includes('@react-three/postprocessing')) {
-              return 'three'
-            }
             if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom') || id.includes('zustand') || id.includes('@tanstack/react-query')) {
               return 'vendor'
             }
-            if (id.includes('framer-motion') || id.includes('lucide-react') || id.includes('clsx') || id.includes('tailwind-merge') || id.includes('class-variance-authority')) {
+            if (id.includes('framer-motion') || id.includes('lucide-react') || id.includes('clsx') || id.includes('tailwind-merge') || id.includes('class-variance-authority') || id.includes('@base-ui')) {
               return 'ui'
             }
             if (id.includes('react-hook-form') || id.includes('@hookform/resolvers') || id.includes('zod')) {

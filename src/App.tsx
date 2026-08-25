@@ -1,59 +1,43 @@
+import { useEffect } from "react"
 import { RouterProvider } from "react-router-dom"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { Toaster } from "@/components/ui/Toaster"
-import { ModalProvider } from "@/components/ui/Modal"
-import { DrawerProvider } from "@/components/ui/Drawer"
+import { Toaster } from "@/components/ui/sonner"
 import { router } from "./router"
-import { useUIStore } from "@/store/uiStore"
-import "./index.css"
+import { useTheme, useUIActions } from "@/store/uiStore"
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 30, // 30 minutes
+      staleTime: 1000 * 60 * 5,
+      gcTime: 1000 * 60 * 30,
       retry: 1,
       refetchOnWindowFocus: false,
     },
   },
 })
 
-function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const { theme } = useUIStore()
+function ThemeSync() {
+  const theme = useTheme()
+  const { setTheme } = useUIActions()
 
-  // Apply theme on mount
-  if (typeof window !== "undefined") {
-    const root = document.documentElement
-    if (theme === "system") {
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
-      root.classList.toggle("dark", prefersDark)
-    } else {
-      root.classList.toggle("dark", theme === "dark")
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-color-scheme: dark)")
+    const onChange = () => {
+      if (theme === "system") setTheme("system")
     }
-  }
+    media.addEventListener("change", onChange)
+    return () => media.removeEventListener("change", onChange)
+  }, [theme, setTheme])
 
-  return <>{children}</>
-}
-
-function AppContent() {
-  const { toasts, removeToast } = useUIStore()
-
-  return (
-    <ThemeProvider>
-      <ModalProvider>
-        <DrawerProvider>
-          <RouterProvider router={router} />
-          <Toaster toasts={toasts} onClose={removeToast} />
-        </DrawerProvider>
-      </ModalProvider>
-    </ThemeProvider>
-  )
+  return null
 }
 
 export function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AppContent />
+      <ThemeSync />
+      <RouterProvider router={router} />
+      <Toaster position="bottom-right" />
     </QueryClientProvider>
   )
 }

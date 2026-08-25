@@ -1,86 +1,57 @@
-import { Outlet } from "react-router-dom"
 import { Suspense } from "react"
-import { Skeleton } from "@/components/ui/Skeleton"
+import { Outlet, useLocation } from "react-router-dom"
+import { useEffect } from "react"
 import { Header } from "@/components/layout/Header"
 import { Footer } from "@/components/layout/Footer"
-import { CartDrawer } from "@/components/shop/CartDrawer"
-import { useUIStore } from "@/store/uiStore"
-import { cn } from "@/lib/utils"
+import { CartSheet } from "@/components/shop/CartSheet"
+import { ErrorBoundary } from "@/components/ErrorBoundary"
+import { Skeleton } from "@/components/ui/skeleton"
 
-/**
- * MainLayout — the persistent app shell.
- *
- * Structure: fixed Header (nav row + optional dismissible announcement
- * strip) → ambient backdrop → <main> with the routed <Outlet/> → Footer.
- * A single <CartDrawer/> is mounted here; Header/Footer open it via the
- * shared Drawer context (`openDrawer("cart")`).
- *
- * The main element's top padding tracks the announcement strip so content
- * is never hidden behind the fixed header when the strip is present, and
- * reclaims that space once dismissed.
- */
-export function MainLayout() {
-  const announcementDismissed = useUIStore((s) => s.announcementDismissed)
-  // h-16 (64px) base nav row on mobile, h-20 (80px) on lg.
-  // Announcement strip ≈ 33px when present.
-  const padClass = announcementDismissed
-    ? "pt-16 lg:pt-20"
-    : "pt-[6.1rem] lg:pt-[7.1rem]"
-
+function RouteFallback() {
   return (
-    <>
-      <Header />
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-[9999] px-4 py-2 bg-[var(--color-accent-cyan)] text-[var(--color-fg-inverse)] rounded-lg font-medium"
-      >
-        Skip to main content
-      </a>
-
-      {/* Ambient backdrop — a faint dot grid + radial cyan glow that sits
-          behind every page. Pointer-events-none keeps it decorative. */}
-      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(0,212,255,0.06),_transparent_55%)]" />
-        <div
-          className="absolute inset-0 opacity-[0.4]"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle, rgba(160,160,176,0.08) 1px, transparent 1px)",
-            backgroundSize: "32px 32px",
-          }}
-        />
+    <div className="container-page flex flex-col gap-8 py-12">
+      <Skeleton className="h-9 w-64 max-w-full" />
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {[1, 2, 3, 4, 5, 6].map((i) => (
+          <div key={i} className="flex flex-col gap-3">
+            <Skeleton className="aspect-[4/3] rounded-lg" />
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+          </div>
+        ))}
       </div>
-
-      <main className={cn("relative min-h-screen", padClass)} id="main-content">
-        <Suspense fallback={<PageSkeleton />}>
-          <Outlet />
-        </Suspense>
-      </main>
-
-      <Footer />
-
-      {/* Global slide-in cart — mounted once, opened via Drawer context */}
-      <CartDrawer />
-    </>
+    </div>
   )
 }
 
-function PageSkeleton() {
+function ScrollToTop() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    window.scrollTo({ top: 0 })
+  }, [pathname])
+  return null
+}
+
+export function MainLayout() {
   return (
-    <div className="container py-12 animate-pulse">
-      <div className="space-y-8">
-        <Skeleton className="h-8 w-1/4 rounded-lg" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="space-y-3">
-              <Skeleton className="aspect-square rounded-xl" />
-              <Skeleton className="h-4 w-3/4 rounded" />
-              <Skeleton className="h-4 w-1/2 rounded" />
-              <Skeleton className="h-4 w-1/4 rounded" />
-            </div>
-          ))}
-        </div>
-      </div>
+    <div className="flex min-h-dvh flex-col">
+      <ScrollToTop />
+      <Header />
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:text-primary-foreground"
+      >
+        Skip to main content
+      </a>
+      <main id="main-content" className="flex-1">
+        <ErrorBoundary>
+          <Suspense fallback={<RouteFallback />}>
+            <Outlet />
+          </Suspense>
+        </ErrorBoundary>
+      </main>
+      <Footer />
+      <CartSheet />
     </div>
   )
 }

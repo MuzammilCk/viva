@@ -1,10 +1,17 @@
-import type { ProductSpecification, ProductVariant } from "@/types"
+import type {
+  Product,
+  ProductArtKind,
+  ProductCategory,
+  ProductFinish,
+  ProductSpecification,
+  ProductVariant,
+} from "@/types"
 
-export interface ProductData {
+interface RawProduct {
   id: string
   slug: string
   name: string
-  category: string
+  category: ProductCategory
   subcategory: string
   price: number
   salePrice?: number
@@ -13,14 +20,125 @@ export interface ProductData {
   shortDescription: string
   specs: ProductSpecification[]
   features: string[]
-  images: string[]
-  modelType: "synthesizer" | "controller" | "interface" | "modular" | "accessory"
-  colorSchemes: string[]
+  artKind: ProductArtKind
   featured: boolean
   variants: ProductVariant[]
 }
 
-export const products: ProductData[] = [
+const FINISHES = {
+  graphite: { id: "graphite", name: "Graphite", body: "#24262d", panel: "#2e313a", accent: "#9aa0b4" },
+  walnut: { id: "walnut", name: "Walnut & Cream", body: "#5b4636", panel: "#e8e0d2", accent: "#b08d57" },
+  indigo: { id: "indigo", name: "Indigo", body: "#31355e", panel: "#3d4270", accent: "#7f8cff" },
+  silver: { id: "silver", name: "Silver", body: "#c8cbd2", panel: "#eceef1", accent: "#6b7080" },
+  black: { id: "black", name: "Matte Black", body: "#1b1c20", panel: "#25262c", accent: "#5c616e" },
+  amber: { id: "amber", name: "Amber Panel", body: "#26221c", panel: "#d9a441", accent: "#f0c987" },
+} as const satisfies Record<string, ProductFinish>
+
+type FinishKey = keyof typeof FINISHES
+
+const META: Record<
+  string,
+  { brand: string; rating: number; reviewCount: number; finishes: FinishKey[]; inTheBox: string[] }
+> = {
+  "synthlab-pro-8": {
+    brand: "SynthLab",
+    rating: 4.8,
+    reviewCount: 214,
+    finishes: ["graphite", "walnut", "indigo"],
+    inTheBox: ["SynthLab Pro 8", "IEC power cable", "USB-C cable", "Printed patch book", "Limited 5-year warranty"],
+  },
+  "keylab-61-mkii": {
+    brand: "Arturia",
+    rating: 4.6,
+    reviewCount: 489,
+    finishes: ["black", "walnut"],
+    inTheBox: ["KeyLab 61 MkII", "USB-C cable", "Analog Lab V license", "Quick-start guide"],
+  },
+  "apollo-twin-x": {
+    brand: "Universal Audio",
+    rating: 4.7,
+    reviewCount: 356,
+    finishes: ["graphite", "silver"],
+    inTheBox: ["Apollo Twin X", "Thunderbolt 3 cable", "Power supply", "UAD Heritage Edition plug-ins"],
+  },
+  "eurorack-case-84hp": {
+    brand: "SynthLab",
+    rating: 4.5,
+    reviewCount: 97,
+    finishes: ["black", "walnut"],
+    inTheBox: ["84HP Eurorack case", "Slotted power supply", "10 × M3 screws", "Ribbon power cables"],
+  },
+  "minilab-3": {
+    brand: "Arturia",
+    rating: 4.4,
+    reviewCount: 612,
+    finishes: ["black"],
+    inTheBox: ["MiniLab 3", "USB-C cable", "Analog Lab Lite license"],
+  },
+  "patch-cables-30cm": {
+    brand: "SynthLab",
+    rating: 4.9,
+    reviewCount: 158,
+    finishes: ["indigo", "amber", "black"],
+    inTheBox: ["6 × 30cm patch cables"],
+  },
+  sub37: {
+    brand: "Moog",
+    rating: 4.9,
+    reviewCount: 178,
+    finishes: ["walnut", "black"],
+    inTheBox: ["Sub 37 Tribute", "IEC power cable", "Dust cover", "Owner's manual"],
+  },
+  "focusrite-scarlett-18i20": {
+    brand: "Focusrite",
+    rating: 4.6,
+    reviewCount: 431,
+    finishes: ["silver"],
+    inTheBox: ["Scarlett 18i20 4th Gen", "USB-C cable", "Power adapter", "Pro Tools Artist + Hitmaker Expansion"],
+  },
+  "mutable-instruments-plaits": {
+    brand: "Mutable Instruments",
+    rating: 4.8,
+    reviewCount: 143,
+    finishes: ["silver", "black"],
+    inTheBox: ["Plaits module", "16-pin power ribbon", "Mounting screws"],
+  },
+  "push-3": {
+    brand: "Ableton",
+    rating: 4.7,
+    reviewCount: 267,
+    finishes: ["graphite"],
+    inTheBox: ["Push 3 standalone", "Power supply", "Cloth dust cover", "Live 12 Suite license"],
+  },
+  hydrasynth: {
+    brand: "ASM",
+    rating: 4.5,
+    reviewCount: 129,
+    finishes: ["black", "indigo"],
+    inTheBox: ["Hydrasynth Explorer", "Power adapter", "Patch sheet collection"],
+  },
+  "motu-m4": {
+    brand: "MOTU",
+    rating: 4.7,
+    reviewCount: 208,
+    finishes: ["black", "silver"],
+    inTheBox: ["MOTU M4", "USB-C cable", "Power supply", "DAW software bundle"],
+  },
+}
+
+function enrich(raw: RawProduct): Product {
+  const meta = META[raw.slug]
+  return {
+    ...raw,
+    brand: meta.brand,
+    rating: meta.rating,
+    reviewCount: meta.reviewCount,
+    finishes: meta.finishes.map((key) => FINISHES[key]),
+    inTheBox: meta.inTheBox,
+  }
+}
+
+const rawProducts: RawProduct[] = [
   {
     id: "1",
     slug: "synthlab-pro-8",
@@ -60,9 +178,7 @@ export const products: ProductData[] = [
       "USB audio interface (24-bit/96kHz)",
       "Firmware updatable via USB",
     ],
-    images: [],
-    modelType: "synthesizer",
-    colorSchemes: ["dark", "vintage", "modern"],
+    artKind: "synthesizer",
     featured: true,
     variants: [
       {
@@ -112,9 +228,7 @@ export const products: ProductData[] = [
       "USB bus powered — no external power supply",
       "Aluminum chassis with wood side panels",
     ],
-    images: [],
-    modelType: "controller",
-    colorSchemes: ["dark", "vintage", "modern"],
+    artKind: "controller",
     featured: true,
     variants: [
       {
@@ -167,9 +281,7 @@ export const products: ProductData[] = [
       "Monitor control with dim, mono, and mute",
       "Console application for routing and control",
     ],
-    images: [],
-    modelType: "interface",
-    colorSchemes: ["dark", "vintage", "modern"],
+    artKind: "interface",
     featured: true,
     variants: [
       {
@@ -187,7 +299,7 @@ export const products: ProductData[] = [
     id: "4",
     slug: "eurorack-case-84hp",
     name: "Eurorack Case 84HP 3U",
-    category: "Modular",
+    category: "Eurorack Modular",
     subcategory: "Case",
     price: 449,
     description: "Professional 84HP Eurorack case with 3U height (2 rows). Features a 2A linear power supply with low noise, bus boards with 14-pin connectors, aluminum rails with M2.5 threaded holes, and a sturdy steel chassis. Includes mounting hardware and cable ties.",
@@ -218,9 +330,7 @@ export const products: ProductData[] = [
       "Rack ears included for 19\" mounting",
       "1-year warranty on power supply",
     ],
-    images: [],
-    modelType: "modular",
-    colorSchemes: ["dark"],
+    artKind: "modular",
     featured: false,
     variants: [
       {
@@ -268,9 +378,7 @@ export const products: ProductData[] = [
       "Analog Lab Intro included (500+ sounds)",
       "Ableton Live Lite included",
     ],
-    images: [],
-    modelType: "controller",
-    colorSchemes: ["dark", "modern"],
+    artKind: "controller",
     featured: false,
     variants: [
       {
@@ -311,9 +419,7 @@ export const products: ProductData[] = [
       "Compatible with all 3.5mm Eurorack jacks",
       "Lifetime warranty",
     ],
-    images: [],
-    modelType: "accessory",
-    colorSchemes: ["dark"],
+    artKind: "accessory",
     featured: false,
     variants: [
       {
@@ -353,9 +459,7 @@ export const products: ProductData[] = [
       "64-step sequencer with parameter locks",
       "Arpeggiator with multiple modes",
     ],
-    images: [],
-    modelType: "synthesizer",
-    colorSchemes: ["dark", "vintage"],
+    artKind: "synthesizer",
     featured: false,
     variants: [
       {
@@ -399,9 +503,7 @@ export const products: ProductData[] = [
       "USB-C connectivity",
       "Focusrite Control 2 software",
     ],
-    images: [],
-    modelType: "interface",
-    colorSchemes: ["dark", "modern"],
+    artKind: "interface",
     featured: false,
     variants: [
       {
@@ -419,7 +521,7 @@ export const products: ProductData[] = [
     id: "9",
     slug: "mutable-instruments-plaits",
     name: "Plaits",
-    category: "Modular",
+    category: "Eurorack Modular",
     subcategory: "Oscillator",
     price: 299,
     description: "Digital macro-oscillator with multiple synthesis models.",
@@ -441,9 +543,7 @@ export const products: ProductData[] = [
       "Morphing between models",
       "12 HP Eurorack format",
     ],
-    images: [],
-    modelType: "modular",
-    colorSchemes: ["dark"],
+    artKind: "modular",
     featured: false,
     variants: [
       {
@@ -484,9 +584,7 @@ export const products: ProductData[] = [
       "Optional battery for mobile production",
       "Deep Ableton Live integration",
     ],
-    images: [],
-    modelType: "controller",
-    colorSchemes: ["dark", "modern"],
+    artKind: "controller",
     featured: false,
     variants: [
       {
@@ -527,9 +625,7 @@ export const products: ProductData[] = [
       "Built-in arpeggiator and sequencer",
       "CV/Gate outputs for modular integration",
     ],
-    images: [],
-    modelType: "synthesizer",
-    colorSchemes: ["dark", "modern"],
+    artKind: "synthesizer",
     featured: false,
     variants: [
       {
@@ -572,9 +668,7 @@ export const products: ProductData[] = [
       "USB-C bus powered",
       "CueMix 5 software for monitoring",
     ],
-    images: [],
-    modelType: "interface",
-    colorSchemes: ["dark", "modern"],
+    artKind: "interface",
     featured: false,
     variants: [
       {
@@ -590,22 +684,46 @@ export const products: ProductData[] = [
   },
 ]
 
-export function getProductBySlug(slug: string): ProductData | undefined {
+export const products: Product[] = rawProducts.map(enrich)
+
+export function getProductBySlug(slug: string): Product | undefined {
   return products.find((p) => p.slug === slug)
 }
 
-export function getProductById(id: string): ProductData | undefined {
+export function getProductById(id: string): Product | undefined {
   return products.find((p) => p.id === id)
 }
 
-export function getProductsByCategory(category: string): ProductData[] {
+export function getProductsByCategory(category: ProductCategory): Product[] {
   return products.filter((p) => p.category === category)
 }
 
-export function getFeaturedProducts(): ProductData[] {
+export function getFeaturedProducts(): Product[] {
   return products.filter((p) => p.featured)
 }
 
-export function getAllProducts(): ProductData[] {
+export function getAllProducts(): Product[] {
   return products
+}
+
+export function getRelatedProducts(product: Product, limit = 4): Product[] {
+  const sameCategory = products.filter(
+    (p) => p.id !== product.id && p.category === product.category
+  )
+  const others = products.filter(
+    (p) => p.id !== product.id && p.category !== product.category
+  )
+  return [...sameCategory, ...others].slice(0, limit)
+}
+
+export interface CategorySummary {
+  category: ProductCategory
+  count: number
+}
+
+export function getCategorySummaries(): CategorySummary[] {
+  return [...new Set(products.map((p) => p.category))].map((category) => ({
+    category,
+    count: products.filter((p) => p.category === category).length,
+  }))
 }

@@ -1,27 +1,18 @@
-import { Suspense } from "react"
-import { HeroSection } from "@/components/sections/HeroSection"
-import { FeaturedProducts } from "@/components/sections/FeaturedProducts"
+import { HeroSection, ValueProps } from "@/components/sections/HeroSection"
 import { CategoriesSection } from "@/components/sections/CategoriesSection"
-import { NewsletterSection } from "@/components/sections/NewsletterSection"
+import { FeaturedProducts } from "@/components/sections/FeaturedProducts"
 import { AboutPreview } from "@/components/sections/AboutPreview"
-import { PageSkeleton } from "@/components/ui/PageSkeleton"
+import { NewsletterSection } from "@/components/sections/NewsletterSection"
 
 export function HomePage() {
   return (
-    <div className="min-h-screen">
-      <Suspense fallback={<PageSkeleton />}>
-        <HeroSection />
-      </Suspense>
-      <Suspense fallback={<PageSkeleton />}>
-        <CategoriesSection />
-      </Suspense>
-      <Suspense fallback={<PageSkeleton />}>
-        <FeaturedProducts />
-      </Suspense>
-      <Suspense fallback={<PageSkeleton />}>
-        <AboutPreview />
-      </Suspense>
+    <>
+      <HeroSection />
+      <ValueProps />
+      <FeaturedProducts />
+      <CategoriesSection />
+      <AboutPreview />
       <NewsletterSection />
-    </div>
+    </>
   )
 }
