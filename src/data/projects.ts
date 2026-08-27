@@ -36,10 +36,16 @@ export const PROJECTS: Project[] = [
     requirement: "Customer wanted balanced vocal clarity and tight bass without sacrificing cabin or boot utility.",
     solution: "Installed 2-way component speakers in damped factory door locations and mounted a compact 4-channel amplifier under the seat.",
     componentsUsed: [
-      "6.5\" 2-Way Component System",
-      "4-Channel Class-D Amplifier",
-      "Butyl Acoustic Damping Sheets",
-      "4-Gauge OFC Wiring Kit",
+      "6.5\" 2-Way Component Speaker System",
+      "4-Channel Class-D Power Amplifier",
+      "Multi-Layer Butyl Acoustic Damping Sheets",
+      "4-Gauge OFC Power & Ground Wiring Kit",
+    ],
+    relatedProductIds: [
+      "placeholder-component-speakers-6-5",
+      "placeholder-4ch-amplifier",
+      "placeholder-sound-damping-sheets",
+      "placeholder-amplifier-wiring-kit-4ga",
     ],
     media: [],
     featured: true,
@@ -55,9 +61,13 @@ export const PROJECTS: Project[] = [
     requirement: "Clean cinematic sound in a residential living room with zero visible cabling across floors.",
     solution: "Configured multi-point receiver tuning, calibrated dedicated subwoofers for room acoustics, and integrated concealed conduit wiring.",
     componentsUsed: [
-      "High-Excursion Subwoofer",
-      "Multi-Channel Power Amp",
+      "12\" High-Excursion Enclosed Subwoofer",
+      "4-Channel Class-D Power Amplifier",
       "Shielded Interconnects",
+    ],
+    relatedProductIds: [
+      "placeholder-subwoofer-12-inch",
+      "placeholder-4ch-amplifier",
     ],
     media: [],
     featured: true,
@@ -73,9 +83,13 @@ export const PROJECTS: Project[] = [
     requirement: "A warm, even acoustic environment for background music that allows effortless conversation across tables.",
     solution: "Engineered a zoned commercial audio architecture with balanced multi-speaker coverage and separate volume controls for indoor and patio zones.",
     componentsUsed: [
-      "Full-Range Architectural Speakers",
-      "Multi-Zone Commercial Amplifier",
-      "OFC Speaker Cabling",
+      "6.5\" 2-Way Component Speaker System",
+      "4-Channel Class-D Power Amplifier",
+      "4-Gauge OFC Wiring Kit",
+    ],
+    relatedProductIds: [
+      "placeholder-component-speakers-6-5",
+      "placeholder-4ch-amplifier",
     ],
     media: [],
     featured: true,
@@ -91,9 +105,14 @@ export const PROJECTS: Project[] = [
     requirement: "Powerful, clear audio across a long passenger cabin capable of overcoming diesel engine and highway noise.",
     solution: "Designed distributed multi-speaker array along roof line powered by high-headroom amplification and dedicated passenger-zone subwoofers.",
     componentsUsed: [
-      "High-Output Coaxial Speakers",
-      "Monoblock Subwoofer Amp",
-      "Heavy-Duty Power Wiring",
+      "6x9\" 3-Way Coaxial Speakers",
+      "Monoblock Class-D Subwoofer Amplifier",
+      "12\" High-Excursion Enclosed Subwoofer",
+    ],
+    relatedProductIds: [
+      "placeholder-coaxial-speakers-6x9",
+      "placeholder-monoblock-amplifier",
+      "placeholder-subwoofer-12-inch",
     ],
     media: [],
     featured: true,
@@ -109,9 +128,13 @@ export const PROJECTS: Project[] = [
     requirement: "Punchy, clear sound in an open-air vehicle with vibration isolation and weather protection.",
     solution: "Fabricated custom fiberglass/wood sealed enclosures with marine-grade terminals and compact high-efficiency amplification.",
     componentsUsed: [
-      "Compact Active Subwoofer",
-      "Silk Dome Tweeters",
+      "Compact Under-Seat Active Subwoofer",
+      "25mm Silk Dome Tweeter Pair",
       "Custom Fabricated Enclosure",
+    ],
+    relatedProductIds: [
+      "placeholder-underseat-active-sub",
+      "placeholder-silk-dome-tweeters",
     ],
     media: [],
     featured: false,
@@ -130,6 +153,9 @@ export const PROJECTS: Project[] = [
       "Matched Output MOSFETs",
       "High-Temp Filter Capacitors",
       "Thermal Compound & Isolators",
+    ],
+    relatedProductIds: [
+      "placeholder-4ch-amplifier",
     ],
     media: [],
     featured: false,
@@ -151,4 +177,11 @@ export function getProjectBySlug(slug: string): Project | undefined {
 
 export function getProjectsByCategory(category: ProjectCategory | string): Project[] {
   return PROJECTS.filter((p) => p.category === category)
+}
+
+export function getRelatedProjects(project: Project, limit = 2): Project[] {
+  return PROJECTS.filter((p) => p.id !== project.id && p.category === project.category).slice(
+    0,
+    limit
+  )
 }

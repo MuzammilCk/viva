@@ -58,8 +58,10 @@ export function FeaturedWorkSection() {
                     </div>
                   </div>
 
-                  <h3 className="mt-3.5 text-base font-semibold leading-snug text-foreground group-hover:text-primary transition-colors">
-                    {project.title}
+                  <h3 className="mt-3.5 text-base font-semibold leading-snug text-foreground transition-colors">
+                    <Link to={`/projects/${project.slug}`} className="hover:text-primary transition-colors">
+                      {project.title}
+                    </Link>
                   </h3>
 
                   <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
@@ -86,10 +88,16 @@ export function FeaturedWorkSection() {
                   )}
                 </div>
 
-                <div className="mt-6 flex items-center justify-between border-t pt-4">
-                  <span className="text-[11px] text-muted-foreground">
-                    Hands-on installation in Kottakkal
-                  </span>
+                <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t pt-4">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="text-xs h-8 px-2"
+                    render={<Link to={`/projects/${project.slug}`} />}
+                  >
+                    View Details
+                    <ArrowRightIcon className="size-3 ml-1" />
+                  </Button>
                   <Button
                     size="sm"
                     variant="outline"

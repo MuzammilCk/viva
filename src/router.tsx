@@ -7,6 +7,9 @@ const HomePage = lazy(() => import("@/pages/HomePage").then((m) => ({ default: m
 const ProjectsPage = lazy(() =>
   import("@/pages/ProjectsPage").then((m) => ({ default: m.ProjectsPage }))
 )
+const ProjectDetailPage = lazy(() =>
+  import("@/pages/ProjectDetailPage").then((m) => ({ default: m.ProjectDetailPage }))
+)
 const ServicesPage = lazy(() =>
   import("@/pages/ServicesPage").then((m) => ({ default: m.ServicesPage }))
 )
@@ -29,6 +32,7 @@ const NotFoundPage = lazy(() =>
 const layoutRoutes: RouteObject[] = [
   { path: "/", element: <HomePage /> },
   { path: "/projects", element: <ProjectsPage /> },
+  { path: "/projects/:slug", element: <ProjectDetailPage /> },
   { path: "/services", element: <ServicesPage /> },
   { path: "/products", element: <ProductsPage /> },
   { path: "/products/:slug", element: <ProductDetailPage /> },

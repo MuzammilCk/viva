@@ -121,7 +121,9 @@ export function ProjectsPage() {
                 </div>
 
                 <h2 className="mt-4 text-lg font-semibold leading-snug text-foreground">
-                  {project.title}
+                  <Link to={`/projects/${project.slug}`} className="hover:text-primary transition-colors">
+                    {project.title}
+                  </Link>
                 </h2>
 
                 <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
@@ -162,17 +164,22 @@ export function ProjectsPage() {
                 )}
               </div>
 
-              <div className="mt-6 flex items-center justify-between border-t pt-4">
-                <span className="text-xs text-muted-foreground">
-                  Kottakkal, Kerala
-                </span>
+              <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t pt-4">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-xs"
+                  render={<Link to={`/projects/${project.slug}`} />}
+                >
+                  View Details
+                </Button>
                 <Button
                   size="sm"
                   className="gap-1.5 text-xs shadow-xs"
                   render={<a href={projectWhatsAppUrl} target="_blank" rel="noopener noreferrer" />}
                 >
                   <MessageCircleIcon className="size-3.5" />
-                  Discuss Similar Project
+                  Discuss Similar
                 </Button>
               </div>
             </div>
