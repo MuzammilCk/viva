@@ -1,6 +1,7 @@
 import { PhoneIcon, MessageCircleIcon, MapPinIcon, ClockIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { BUSINESS_CONFIG } from "@/config/business"
+import { trackContactClick } from "@/lib/analytics"
 
 export function ClosingCtaSection() {
   const whatsappUrl = `https://wa.me/91${BUSINESS_CONFIG.contact.whatsapp.number}?text=${encodeURIComponent(
@@ -29,7 +30,20 @@ export function ClosingCtaSection() {
               size="lg"
               variant="secondary"
               className="gap-2 text-foreground font-semibold shadow-xs"
-              render={<a href={whatsappUrl} target="_blank" rel="noopener noreferrer" />}
+              render={
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() =>
+                    trackContactClick({
+                      action: "whatsapp",
+                      label: "closing_cta_section",
+                      destination: whatsappUrl,
+                    })
+                  }
+                />
+              }
             >
               <MessageCircleIcon className="size-4" />
               Chat on WhatsApp ({BUSINESS_CONFIG.contact.whatsapp.display})
@@ -38,7 +52,18 @@ export function ClosingCtaSection() {
               size="lg"
               variant="outline"
               className="gap-2 border-primary-foreground/30 bg-primary-foreground/10 text-primary-foreground hover:bg-primary-foreground/20"
-              render={<a href={BUSINESS_CONFIG.contact.phone.tel} />}
+              render={
+                <a
+                  href={BUSINESS_CONFIG.contact.phone.tel}
+                  onClick={() =>
+                    trackContactClick({
+                      action: "call",
+                      label: "closing_cta_section",
+                      destination: BUSINESS_CONFIG.contact.phone.tel,
+                    })
+                  }
+                />
+              }
             >
               <PhoneIcon className="size-4" />
               Call Specialist ({BUSINESS_CONFIG.contact.phone.display})

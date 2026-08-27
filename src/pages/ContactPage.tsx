@@ -19,8 +19,15 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { BUSINESS_CONFIG } from "@/config/business"
+import { usePageSeo } from "@/hooks/usePageSeo"
+import { trackContactClick } from "@/lib/analytics"
 
 export function ContactPage() {
+  usePageSeo({
+    title: `Contact Audio Specialist — Kottakkal, Malappuram | ${BUSINESS_CONFIG.name}`,
+    description: `Direct contact with our audio specialist in Kottakkal, Kerala. Connect via WhatsApp or Call for car audio setups, repairs, and home theatre quotes.`,
+  })
+
   const whatsappUrl = `https://wa.me/91${BUSINESS_CONFIG.contact.whatsapp.number}?text=${encodeURIComponent(
     BUSINESS_CONFIG.contact.whatsapp.defaultMessage
   )}`
@@ -85,7 +92,20 @@ export function ContactPage() {
             <Button
               size="lg"
               className="w-full gap-2 bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs font-semibold"
-              render={<a href={whatsappUrl} target="_blank" rel="noopener noreferrer" />}
+              render={
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() =>
+                    trackContactClick({
+                      action: "whatsapp",
+                      label: "contact_page_card",
+                      destination: whatsappUrl,
+                    })
+                  }
+                />
+              }
             >
               <MessageCircleIcon className="size-4.5" />
               Chat on WhatsApp
@@ -122,7 +142,18 @@ export function ContactPage() {
               size="lg"
               variant="outline"
               className="w-full gap-2 border-primary/40 text-foreground hover:bg-primary/10 font-semibold"
-              render={<a href={BUSINESS_CONFIG.contact.phone.tel} />}
+              render={
+                <a
+                  href={BUSINESS_CONFIG.contact.phone.tel}
+                  onClick={() =>
+                    trackContactClick({
+                      action: "call",
+                      label: "contact_page_card",
+                      destination: BUSINESS_CONFIG.contact.phone.tel,
+                    })
+                  }
+                />
+              }
             >
               <PhoneIcon className="size-4.5 text-primary" />
               Call Specialist Now

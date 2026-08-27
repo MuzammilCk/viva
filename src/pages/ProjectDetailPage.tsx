@@ -25,11 +25,22 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { ProductCard } from "@/components/catalog/ProductCard"
+import { usePageSeo } from "@/hooks/usePageSeo"
+import { trackContactClick } from "@/lib/analytics"
 
 export function ProjectDetailPage() {
   const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
   const project = useMemo(() => (slug ? getProjectBySlug(slug) : undefined), [slug])
+
+  usePageSeo({
+    title: project
+      ? `${project.title} — ${BUSINESS_CONFIG.name} Kottakkal`
+      : `Project Details — ${BUSINESS_CONFIG.name}`,
+    description: project
+      ? `${project.summary} Audio project executed in Kottakkal, Malappuram district, Kerala by ${BUSINESS_CONFIG.name}.`
+      : undefined,
+  })
 
   const allProducts = useMemo(() => getAllProducts(), [])
   const matchingProducts = useMemo(() => {
@@ -193,7 +204,21 @@ export function ProjectDetailPage() {
               <Button
                 size="lg"
                 className="w-full gap-2 font-semibold shadow-xs"
-                render={<a href={projectWhatsAppUrl} target="_blank" rel="noopener noreferrer" />}
+                render={
+                  <a
+                    href={projectWhatsAppUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() =>
+                      trackContactClick({
+                        action: "whatsapp",
+                        label: "project_detail_sidebar",
+                        destination: projectWhatsAppUrl,
+                        metadata: { projectId: project.id, projectTitle: project.title },
+                      })
+                    }
+                  />
+                }
               >
                 <MessageCircleIcon className="size-4" />
                 Discuss on WhatsApp
@@ -202,7 +227,19 @@ export function ProjectDetailPage() {
                 size="lg"
                 variant="outline"
                 className="w-full gap-2"
-                render={<a href={BUSINESS_CONFIG.contact.phone.tel} />}
+                render={
+                  <a
+                    href={BUSINESS_CONFIG.contact.phone.tel}
+                    onClick={() =>
+                      trackContactClick({
+                        action: "call",
+                        label: "project_detail_sidebar",
+                        destination: BUSINESS_CONFIG.contact.phone.tel,
+                        metadata: { projectId: project.id, projectTitle: project.title },
+                      })
+                    }
+                  />
+                }
               >
                 <PhoneIcon className="size-4" />
                 Call ({BUSINESS_CONFIG.contact.phone.display})

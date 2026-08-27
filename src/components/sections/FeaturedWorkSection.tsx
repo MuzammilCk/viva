@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { getFeaturedProjects } from "@/data/projects"
 import { BUSINESS_CONFIG } from "@/config/business"
+import { trackContactClick } from "@/lib/analytics"
 
 export function FeaturedWorkSection() {
   const featuredProjects = getFeaturedProjects().slice(0, 4)
@@ -102,7 +103,21 @@ export function FeaturedWorkSection() {
                     size="sm"
                     variant="outline"
                     className="text-xs gap-1.5 h-8"
-                    render={<a href={projectWhatsAppUrl} target="_blank" rel="noopener noreferrer" />}
+                    render={
+                      <a
+                        href={projectWhatsAppUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() =>
+                          trackContactClick({
+                            action: "whatsapp",
+                            label: "featured_work_item",
+                            destination: projectWhatsAppUrl,
+                            metadata: { projectId: project.id, projectTitle: project.title },
+                          })
+                        }
+                      />
+                    }
                   >
                     <MessageCircleIcon className="size-3.5" />
                     Discuss Similar

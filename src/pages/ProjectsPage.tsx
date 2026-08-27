@@ -19,10 +19,19 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import { usePageSeo } from "@/hooks/usePageSeo"
+import { trackContactClick } from "@/lib/analytics"
 
 export function ProjectsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const activeCategory = searchParams.get("category") as ProjectCategory | null
+
+  usePageSeo({
+    title: activeCategory
+      ? `${activeCategory} Audio Projects & Installations — ${BUSINESS_CONFIG.name} Kottakkal`
+      : `Audio Installation Projects & Builds — ${BUSINESS_CONFIG.name} Kottakkal, Kerala`,
+    description: `Browse custom vehicle audio builds, home theatre calibrations, commercial soundscapes, and electronics repairs executed by ${BUSINESS_CONFIG.name} in Kottakkal.`,
+  })
 
   const allProjects = useMemo(() => getAllProjects(), [])
 
@@ -176,7 +185,21 @@ export function ProjectsPage() {
                 <Button
                   size="sm"
                   className="gap-1.5 text-xs shadow-xs"
-                  render={<a href={projectWhatsAppUrl} target="_blank" rel="noopener noreferrer" />}
+                  render={
+                    <a
+                      href={projectWhatsAppUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() =>
+                        trackContactClick({
+                          action: "whatsapp",
+                          label: "projects_grid_item",
+                          destination: projectWhatsAppUrl,
+                          metadata: { projectId: project.id, projectTitle: project.title },
+                        })
+                      }
+                    />
+                  }
                 >
                   <MessageCircleIcon className="size-3.5" />
                   Discuss Similar

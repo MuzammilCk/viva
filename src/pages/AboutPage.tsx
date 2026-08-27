@@ -25,8 +25,15 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { BUSINESS_CONFIG } from "@/config/business"
+import { usePageSeo } from "@/hooks/usePageSeo"
+import { trackContactClick } from "@/lib/analytics"
 
 export function AboutPage() {
+  usePageSeo({
+    title: `About ${BUSINESS_CONFIG.name} (${BUSINESS_CONFIG.legalName}) — Audio Specialists in Kottakkal, Kerala`,
+    description: `Specialist audio engineering rooted in craftsmanship. Learn about our one-expert operating model and Kottakkal workshop serving vehicles, venues, and homes.`,
+  })
+
   const whatsappUrl = `https://wa.me/91${BUSINESS_CONFIG.contact.whatsapp.number}?text=${encodeURIComponent(
     "Hi VIVA team, I would like to learn more about your audio solutions."
   )}`
@@ -236,7 +243,20 @@ export function AboutPage() {
           <Button
             size="lg"
             className="gap-2"
-            render={<a href={whatsappUrl} target="_blank" rel="noopener noreferrer" />}
+            render={
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() =>
+                  trackContactClick({
+                    action: "whatsapp",
+                    label: "about_page_bottom_cta",
+                    destination: whatsappUrl,
+                  })
+                }
+              />
+            }
           >
             <MessageCircleIcon className="size-4" />
             Chat on WhatsApp
@@ -245,7 +265,18 @@ export function AboutPage() {
             size="lg"
             variant="outline"
             className="gap-2"
-            render={<a href={BUSINESS_CONFIG.contact.phone.tel} />}
+            render={
+              <a
+                href={BUSINESS_CONFIG.contact.phone.tel}
+                onClick={() =>
+                  trackContactClick({
+                    action: "call",
+                    label: "about_page_bottom_cta",
+                    destination: BUSINESS_CONFIG.contact.phone.tel,
+                  })
+                }
+              />
+            }
           >
             <PhoneIcon className="size-4" />
             Call ({BUSINESS_CONFIG.contact.phone.display})

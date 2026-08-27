@@ -24,11 +24,22 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { ProductCard } from "@/components/catalog/ProductCard"
+import { usePageSeo } from "@/hooks/usePageSeo"
+import { trackContactClick } from "@/lib/analytics"
 
 export function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
   const product = useMemo(() => (slug ? getProductBySlug(slug) : undefined), [slug])
+
+  usePageSeo({
+    title: product
+      ? `${product.name} (${product.brand} ${product.model}) — ${BUSINESS_CONFIG.name} Kottakkal`
+      : `Product Details — ${BUSINESS_CONFIG.name}`,
+    description: product
+      ? `${product.description || product.name} Supplied and installed with precision tuning by ${BUSINESS_CONFIG.name} in Kottakkal, Malappuram district, Kerala.`
+      : undefined,
+  })
 
   if (!product) {
     return (
@@ -178,7 +189,21 @@ export function ProductDetailPage() {
               <Button
                 size="lg"
                 className="flex-1 gap-2"
-                render={<a href={whatsappUrl} target="_blank" rel="noopener noreferrer" />}
+                render={
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() =>
+                      trackContactClick({
+                        action: "whatsapp",
+                        label: "product_detail_cta",
+                        destination: whatsappUrl,
+                        metadata: { productId: product.id, productName: product.name },
+                      })
+                    }
+                  />
+                }
               >
                 <MessageCircleIcon className="size-4" />
                 Ask on WhatsApp
@@ -187,7 +212,19 @@ export function ProductDetailPage() {
                 size="lg"
                 variant="outline"
                 className="flex-1 gap-2"
-                render={<a href={BUSINESS_CONFIG.contact.phone.tel} />}
+                render={
+                  <a
+                    href={BUSINESS_CONFIG.contact.phone.tel}
+                    onClick={() =>
+                      trackContactClick({
+                        action: "call",
+                        label: "product_detail_cta",
+                        destination: BUSINESS_CONFIG.contact.phone.tel,
+                        metadata: { productId: product.id, productName: product.name },
+                      })
+                    }
+                  />
+                }
               >
                 <PhoneIcon className="size-4" />
                 Call ({BUSINESS_CONFIG.contact.phone.display})

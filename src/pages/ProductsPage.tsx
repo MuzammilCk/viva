@@ -22,6 +22,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import { usePageSeo } from "@/hooks/usePageSeo"
+import { BUSINESS_CONFIG } from "@/config/business"
 
 type SortOption = "featured" | "name" | "price-asc" | "price-desc"
 
@@ -39,6 +41,13 @@ export function ProductsPage() {
   const activeCategory = searchParams.get("category") as ProductCategory | null
   const searchQuery = searchParams.get("q") ?? ""
   const activeSort = (searchParams.get("sort") as SortOption) ?? "featured"
+
+  usePageSeo({
+    title: activeCategory
+      ? `${activeCategory} Equipment & Components — ${BUSINESS_CONFIG.name} Kottakkal`
+      : `Audio Equipment & Components Catalog — ${BUSINESS_CONFIG.name} Kottakkal`,
+    description: `Curated catalog of speakers, amplifiers, subwoofers, and audio accessories supplied and installed by ${BUSINESS_CONFIG.name} in Kottakkal, Malappuram district, Kerala.`,
+  })
 
   const allProducts = useMemo(() => getAllProducts(), [])
 

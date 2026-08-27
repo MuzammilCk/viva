@@ -6,6 +6,8 @@ import { EnvironmentsSection } from "@/components/sections/EnvironmentsSection"
 import { FeaturedProductsSection } from "@/components/sections/FeaturedProductsSection"
 import { TrustSection } from "@/components/sections/TrustSection"
 import { ClosingCtaSection } from "@/components/sections/ClosingCtaSection"
+import { usePageSeo } from "@/hooks/usePageSeo"
+import { BUSINESS_CONFIG } from "@/config/business"
 
 /**
  * HomePage for VIVA Business Team
@@ -21,6 +23,11 @@ import { ClosingCtaSection } from "@/components/sections/ClosingCtaSection"
  * 8. Direct Call/WhatsApp CTA (Closing conversion action)
  */
 export function HomePage() {
+  usePageSeo({
+    title: `${BUSINESS_CONFIG.name} — Audio Solutions, Car Audio & Sound Engineering | Kottakkal, Kerala`,
+    description: `Custom car audio, home theatre calibration, commercial sound systems, and component repair in Kottakkal, Malappuram district, Kerala. Single specialist execution.`,
+  })
+
   return (
     <div className="flex flex-col">
       {/* Block 1: Brand statement / Value proposition */}

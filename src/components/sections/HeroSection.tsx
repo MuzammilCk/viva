@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { BUSINESS_CONFIG } from "@/config/business"
+import { trackContactClick } from "@/lib/analytics"
 
 export function HeroSection() {
   const whatsappUrl = `https://wa.me/91${BUSINESS_CONFIG.contact.whatsapp.number}?text=${encodeURIComponent(
@@ -46,7 +47,20 @@ export function HeroSection() {
             <Button
               size="lg"
               className="gap-2 shadow-xs"
-              render={<a href={whatsappUrl} target="_blank" rel="noopener noreferrer" />}
+              render={
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() =>
+                    trackContactClick({
+                      action: "whatsapp",
+                      label: "hero_primary_cta",
+                      destination: whatsappUrl,
+                    })
+                  }
+                />
+              }
             >
               <MessageCircleIcon className="size-4" />
               Discuss on WhatsApp
@@ -62,10 +76,20 @@ export function HeroSection() {
           </div>
 
           <div className="flex flex-wrap items-center gap-6 pt-4 text-xs text-muted-foreground border-t w-full">
-            <div className="flex items-center gap-2">
+            <a
+              href={BUSINESS_CONFIG.contact.phone.tel}
+              onClick={() =>
+                trackContactClick({
+                  action: "call",
+                  label: "hero_info_strip_call",
+                  destination: BUSINESS_CONFIG.contact.phone.tel,
+                })
+              }
+              className="flex items-center gap-2 hover:text-foreground transition-colors"
+            >
               <PhoneIcon className="size-3.5 text-primary" />
               <span>Call: <strong className="font-semibold text-foreground">{BUSINESS_CONFIG.contact.phone.display}</strong></span>
-            </div>
+            </a>
             <div className="flex items-center gap-2">
               <span className="size-1.5 rounded-full bg-muted-foreground/40" />
               <span>{BUSINESS_CONFIG.hours.summary}</span>

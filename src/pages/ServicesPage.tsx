@@ -28,6 +28,8 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import type { Service } from "@/types"
+import { usePageSeo } from "@/hooks/usePageSeo"
+import { trackContactClick } from "@/lib/analytics"
 
 const SERVICE_ICONS: Record<string, React.ElementType> = {
   "complete-audio-solutions": SparklesIcon,
@@ -67,6 +69,11 @@ const WORKFLOW_STEPS = [
 ]
 
 export function ServicesPage() {
+  usePageSeo({
+    title: `Audio Engineering & Installation Services — Kottakkal, Kerala | ${BUSINESS_CONFIG.name}`,
+    description: `Complete audio solutions, equipment recommendations, car damping, speaker fitment, amplifier repair, and acoustic calibration in Kottakkal, Malappuram.`,
+  })
+
   const services = getAllServices()
 
   return (
@@ -156,6 +163,13 @@ export function ServicesPage() {
                 href={BUSINESS_CONFIG.contact.whatsapp.url}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() =>
+                  trackContactClick({
+                    action: "whatsapp",
+                    label: "services_page_bottom_cta",
+                    destination: BUSINESS_CONFIG.contact.whatsapp.url,
+                  })
+                }
               />
             }
           >
@@ -166,7 +180,18 @@ export function ServicesPage() {
             size="lg"
             variant="outline"
             className="gap-2"
-            render={<a href={BUSINESS_CONFIG.contact.phone.tel} />}
+            render={
+              <a
+                href={BUSINESS_CONFIG.contact.phone.tel}
+                onClick={() =>
+                  trackContactClick({
+                    action: "call",
+                    label: "services_page_bottom_cta",
+                    destination: BUSINESS_CONFIG.contact.phone.tel,
+                  })
+                }
+              />
+            }
           >
             <PhoneIcon className="size-4" />
             Call ({BUSINESS_CONFIG.contact.phone.display})
@@ -287,6 +312,14 @@ function ServiceCard({ service, index }: ServiceCardProps) {
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() =>
+                  trackContactClick({
+                    action: "whatsapp",
+                    label: "service_card_item",
+                    destination: whatsappUrl,
+                    metadata: { serviceId: service.id, serviceName: service.name },
+                  })
+                }
               />
             }
           >
@@ -298,7 +331,19 @@ function ServiceCard({ service, index }: ServiceCardProps) {
             size="default"
             variant="outline"
             className="w-full gap-2"
-            render={<a href={BUSINESS_CONFIG.contact.phone.tel} />}
+            render={
+              <a
+                href={BUSINESS_CONFIG.contact.phone.tel}
+                onClick={() =>
+                  trackContactClick({
+                    action: "call",
+                    label: "service_card_item",
+                    destination: BUSINESS_CONFIG.contact.phone.tel,
+                    metadata: { serviceId: service.id, serviceName: service.name },
+                  })
+                }
+              />
+            }
           >
             <PhoneIcon className="size-4" />
             Call: {BUSINESS_CONFIG.contact.phone.display}

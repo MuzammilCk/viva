@@ -2,6 +2,7 @@ import { Link } from "react-router-dom"
 import { MapPinIcon, MessageCircleIcon, PhoneIcon } from "lucide-react"
 import { getCategorySummaries } from "@/data/products"
 import { BUSINESS_CONFIG } from "@/config/business"
+import { trackContactClick } from "@/lib/analytics"
 
 const SUPPORT_LINKS = [
   { label: "Complete Solutions", href: "/services#complete-audio-solutions" },
@@ -85,6 +86,13 @@ export function Footer() {
           <address className="flex flex-col gap-2 not-italic text-sm text-muted-foreground">
             <a
               href={BUSINESS_CONFIG.contact.phone.tel}
+              onClick={() =>
+                trackContactClick({
+                  action: "call",
+                  label: "footer_call_link",
+                  destination: BUSINESS_CONFIG.contact.phone.tel,
+                })
+              }
               className="flex items-center gap-2 hover:text-foreground"
             >
               <PhoneIcon className="size-3.5 shrink-0" />
@@ -94,6 +102,13 @@ export function Footer() {
               href={BUSINESS_CONFIG.contact.whatsapp.url}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() =>
+                trackContactClick({
+                  action: "whatsapp",
+                  label: "footer_whatsapp_link",
+                  destination: BUSINESS_CONFIG.contact.whatsapp.url,
+                })
+              }
               className="flex items-center gap-2 hover:text-foreground"
             >
               <MessageCircleIcon className="size-3.5 shrink-0" />

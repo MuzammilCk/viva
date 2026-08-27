@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { formatProductPrice } from "@/lib/format"
 import { BUSINESS_CONFIG } from "@/config/business"
+import { trackContactClick } from "@/lib/analytics"
 import type { Product } from "@/types"
 
 interface ProductCardProps {
@@ -85,7 +86,21 @@ export function ProductCard({ product }: ProductCardProps) {
               size="sm"
               variant="outline"
               className="flex-1 text-xs gap-1.5"
-              render={<a href={whatsappUrl} target="_blank" rel="noopener noreferrer" />}
+              render={
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() =>
+                    trackContactClick({
+                      action: "whatsapp",
+                      label: "product_card_whatsapp",
+                      destination: whatsappUrl,
+                      metadata: { productId: product.id, productName: product.name },
+                    })
+                  }
+                />
+              }
             >
               <MessageCircleIcon className="size-3.5" />
               WhatsApp

@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/Footer"
 import { StickyContactBar } from "@/components/layout/StickyContactBar"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
 import { Skeleton } from "@/components/ui/skeleton"
+import { getLocalBusinessSchema } from "@/lib/schema"
 
 function RouteFallback() {
   return (
@@ -33,8 +34,14 @@ function ScrollToTop() {
 }
 
 export function MainLayout() {
+  const schema = getLocalBusinessSchema()
+
   return (
     <div className="flex min-h-dvh flex-col pb-16 sm:pb-0">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      />
       <ScrollToTop />
       <Header />
       <a
