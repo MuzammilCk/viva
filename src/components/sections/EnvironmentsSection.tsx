@@ -4,7 +4,6 @@ import {
   HomeIcon,
   CoffeeIcon,
   Building2Icon,
-  ChurchIcon,
   RadioTowerIcon,
 } from "lucide-react"
 

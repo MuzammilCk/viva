@@ -1,10 +1,9 @@
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 import { useSearchParams, Link } from "react-router-dom"
 import {
   ChevronRightIcon,
   MessageCircleIcon,
   CheckCircle2Icon,
-  SlidersHorizontalIcon,
 } from "lucide-react"
 import { getAllProjects, PROJECT_CATEGORIES } from "@/data/projects"
 import type { ProjectCategory } from "@/types"

@@ -10,7 +10,6 @@ import {
   HammerIcon,
   ActivityIcon,
   PackageCheckIcon,
-  LayersIcon,
   MapPinIcon,
   CheckCircle2Icon,
   ArrowRightIcon,

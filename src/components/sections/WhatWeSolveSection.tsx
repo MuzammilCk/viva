@@ -7,7 +7,6 @@ import {
   LayersIcon,
   ArrowRightIcon,
 } from "lucide-react"
-import { Button } from "@/components/ui/button"
 
 const ENTRY_MODES = [
   {

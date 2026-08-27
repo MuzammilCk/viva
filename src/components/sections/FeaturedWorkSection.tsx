@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { ArrowRightIcon, MessageCircleIcon, SparklesIcon, CheckCircle2Icon } from "lucide-react"
+import { ArrowRightIcon, MessageCircleIcon, CheckCircle2Icon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { getFeaturedProjects } from "@/data/projects"
