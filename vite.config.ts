@@ -10,7 +10,6 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@components': path.resolve(__dirname, './src/components'),
-      '@hooks': path.resolve(__dirname, './src/hooks'),
       '@store': path.resolve(__dirname, './src/store'),
       '@lib': path.resolve(__dirname, './src/lib'),
       '@types': path.resolve(__dirname, './src/types'),
@@ -30,14 +29,11 @@ export default defineConfig({
       output: {
         manualChunks: (id: string) => {
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom') || id.includes('zustand') || id.includes('@tanstack/react-query')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom') || id.includes('zustand')) {
               return 'vendor'
             }
             if (id.includes('framer-motion') || id.includes('lucide-react') || id.includes('clsx') || id.includes('tailwind-merge') || id.includes('class-variance-authority') || id.includes('@base-ui')) {
               return 'ui'
-            }
-            if (id.includes('react-hook-form') || id.includes('@hookform/resolvers') || id.includes('zod')) {
-              return 'forms'
             }
           }
         },

@@ -1,183 +1,64 @@
-# AGENTS.md
+# AGENTS.md — VIVA Business Team Website
 
-Guidance for Codex (and other agents) working with this repository.
-The actual application lives in the [`music-electronics-shop/`](./music-electronics-shop) subdirectory (a Vite + React SPA). This file documents that codebase.
+Guidance for any AI coding agent (Claude Code, Codex, Cursor, Windsurf, or a human) working in this repository. Read this in full before touching any file.
 
-## Project Overview
+## What this project is
 
-**SynthLab** is a React 19 single-page application for a music electronics retailer selling synthesizers, MIDI controllers, audio interfaces, Eurorack modular gear, and accessories. It is built as a Vite + TypeScript project and features real-time 3D product configurators (Three.js / `@react-three/*`), a persistent shopping cart, a multi-step checkout flow, and an account area.
+A refactor of a generic e-commerce React SPA into a real business site for VIVA Business Team, an audio-solutions business (car audio, home theatre, commercial installs) in Kottakkal, Kerala. The repo currently contains fictional "SynthLab" synth-shop demo content that must be replaced with real VIVA content — never with different invented content.
 
-- **Name:** `music-electronics-shop` (private, version `0.0.0`)
-- **Template:** React + TypeScript + Vite (with Oxlint)
-- **App shell:** `src/main.tsx` → `src/App.tsx` → `src/router.tsx`
-- **Target:** modern browsers (build target `es2022`, ESM modules)
+## Read before doing anything
 
-### Tech Stack
+Seven planning documents in `docs/planning/` are the specification for this project. They are not background reading — they are the spec. Consult the one that answers your current question; don't guess or fall back on general e-commerce conventions.
 
-| Area | Tool |
-| --- | --- |
-| Framework | React 19 (`react`, `react-dom`) |
-| Build / Bundler | Vite 8 (`@vitejs/plugin-react`) |
-| Styling | Tailwind CSS 4 (`@tailwindcss/vite`) + CSS variables + design tokens |
-| Language | TypeScript ~6.0 (`verbatimModuleSyntax`, strict mode) |
-| Routing | React Router DOM 7 (`createBrowserRouter`) |
-| State | Zustand 5 (`uiStore`, `cartStore`) — persisted to `localStorage` |
-| Data fetching | TanStack React Query 5 (`QueryClient`) |
-| 3D | Three.js 0.185, `@react-three/fiber`, `@react-three/drei`, `@react-three/postprocessing` |
-| Forms | `react-hook-form` + `zod` + `@hookform/resolvers` |
-| UI primitives | `@radix-ui/react-select`, `framer-motion`, `lucide-react` |
-| Styling utilities | `clsx` + `tailwind-merge` (`cn`) |
-| Linting | Oxlint (plugins: `react`, `typescript`, `oxc`) |
+| Question | Read |
+|---|---|
+| Is this business fact real? What's confirmed vs. still TBD? | `03-viva-business-context.md` |
+| Why does VIVA work this way? What's the positioning/tone? | `02-viva-business-model.md` |
+| What should this page contain, and in what order? | `04-viva-website-architecture.md` |
+| How should it look, behave, and respond on mobile? | `05-viva-ui-ux-direction.md` |
+| What order do I build things in, and what's the phase plan? | `06-viva-refactor-blueprint.md` |
+| What in the current codebase do I keep/change/remove, file by file? | `07-viva-repo-audit.md` |
+| Why are things designed this way, what did the original doc get wrong? | `01-viva-expert-opinion.md` (background only, not a spec) |
 
-## Repository Layout
+**If two documents seem to conflict**, `07-viva-repo-audit.md` and `03-viva-business-context.md` win on facts about the current code and the business respectively — they're the most recently verified. Flag the conflict to the person rather than silently picking one.
 
-```
-music-electronics-shop/
-├── @/                          # note: stray shadcn artifact at repo root (not part of src/ build)
-├── public/
-│   ├── favicon.svg
-│   └── icons.svg
-├── src/
-│   ├── assets/                 # static images (hero.png, react.svg, vite.svg)
-│   ├── components/
-│   │   ├── layout/             # Header, Footer, MainLayout, ThemeProvider,
-│   │   │                      #   ModalProvider, DrawerProvider, QueryProvider
-│   │   ├── sections/           # HeroSection, FeaturedProducts, CategoriesSection,
-│   │   │                      #   NewsletterSection, AboutPreview
-│   │   ├── three/              # 3D canvas wrappers
-│   │   │   ├── Canvas.tsx, Lighting.tsx, CameraControls.tsx, PostProcessing.tsx
-│   │   │   └── models/products/ # SynthesizerModel, MidiControllerModel,
-│   │   │                        #   AudioInterfaceModel, EurorackModuleModel
-│   │   └── ui/                 # primitive UI: Badge, Button, Card, Grid, Input,
-│   │                            #   Modal, Drawer, Select, Tabs, Skeleton,
-│   │                            #   PageSkeleton, Divider, Toaster
-│   ├── hooks/                  # (declared as alias, currently empty)
-│   ├── lib/
-│   │   ├── tokens.ts           # design token system (colors, typography, spacing, 3D, animation)
-│   │   └── utils.ts            # utilities: cn(), formatPrice, slugify, debounce, etc.
-│   ├── pages/                  # route pages: Home, Products, ProductDetail, Cart,
-│   │                            #   Checkout, Account, Configure, NotFound
-│   ├── store/
-│   │   ├── uiStore.ts          # Zustand UI store (theme, modals, drawers, toasts, loading)
-│   │   └── cartStore.ts        # Zustand cart store (items, totals, promo codes, shipping)
-│   ├── types/index.ts          # central type definitions (Product, Cart, Order, User, 3D, UI)
-│   ├── router.tsx              # route config (createBrowserRouter, root layout route)
-│   ├── App.tsx                 # providers: QueryClientProvider + RouterProvider
-│   ├── main.tsx                # ReactDOM.createRoot entry
-│   └── index.css               # Tailwind directives + global CSS variables
-├── package.json
-├── vite.config.ts
-├── tsconfig.json               # project references (app + node)
-├── tsconfig.app.json           # path aliases + strict TS config
-├── tsconfig.node.json
-├── .oxlintrc.json             # Oxlint config (react/typescript/oxc plugins)
-├── components.json            # shadcn-style config (new-york style, no tailwind.config)
-└── .mcp.json                  # MCP server configuration
-```
+## Non-negotiable rules
 
-### Path Aliases (`vite.config.ts` + `tsconfig.app.json`)
+- **Never invent a business fact.** Phone numbers, WhatsApp number, address, hours, prices, reviews, testimonials, project details, brand color — if it's not in `03-viva-business-context.md`, it does not exist yet. Use the "TBD" / coming-soon handling that document specifies. A plausible-sounding placeholder (a fake phone number, a rounded price, a five-star rating) is exactly the failure mode this project exists to eliminate.
+- **All business identity facts live in one place**: `src/config/business.ts` (built in Phase 1). Every component reads from it. Never hardcode a phone number, address, or brand name a second time anywhere else in the codebase.
+- **No e-commerce functionality.** No cart, checkout, payment gateway, customer accounts, wishlist, or live inventory. If you find yourself rebuilding any of these, stop — it's explicitly out of scope, see `03-viva-business-context.md` §6.
+- **No forms.** Every conversion action is a Call link or a WhatsApp deep link. Nothing else, per the confirmed phase-1 scope.
+- **No stock photography.** Real project photos only. Where a real photo doesn't exist yet, leave a clearly-labeled placeholder — never substitute a generic stock image.
+- **Prices are genuine or absent.** A product shows its real price or "Contact for price." Never a made-up number.
+- **English only** for phase 1 content. Don't build a language switcher yet.
+- **RIMS** (the registered/legal trade name) appears only where `03-viva-business-context.md` §5 specifies — never as a page heading or nav item.
+- **Scaffolding content is unmistakably fake.** Building a page's structure before real photos, prices, or projects exist is fine and often necessary — but every placeholder entry must be obviously a placeholder (e.g. named literally `PLACEHOLDER — ...`), so it can never be mistaken for real content by a reader or by a future session skimming the code. This is different from inventing a fact: a labeled placeholder is honest about what it is.
 
-| Alias | Resolves to |
-| --- | --- |
-| `@/*` | `src/*` |
-| `@components/*` | `src/components/*` |
-| `@hooks/*` | `src/hooks/*` (empty) |
-| `@store/*` | `src/store/*` |
-| `@lib/*` | `src/lib/*` |
-| `@types/*` | `src/types/*` |
-| `@data/*` | `src/data/*` (not yet present) |
-| `@assets/*` | `src/assets/*` |
+## Definition of done for a phase
 
-Imports use the `@/` prefix consistently (e.g. `import { cn } from "@/lib/utils"`).
+A phase isn't done until all of these are true:
 
-## Development Commands
+1. It matches what `04-viva-website-architecture.md` and `05-viva-ui-ux-direction.md` specify for that piece — not a reasonable-seeming alternative.
+2. `./scripts/verify-content.sh` passes, and you've shown the output as evidence, not just asserted it passes.
+3. No leftover SynthLab/demo content or e-commerce code remains in the files you touched.
+4. Anything you couldn't complete because a real fact is still missing is left as an explicit, labeled placeholder — not filled in with a guess — and called out in your summary to the person.
 
-From the `music-electronics-shop/` directory:
+## Working rhythm
 
-```bash
-npm install      # install dependencies
-npm run dev      # start Vite dev server (http://localhost:3000, host: true)
-npm run build    # type-check + production build (tsc -b && vite build)
-npm run preview  # serve the production build locally
-npm run lint     # run Oxlint
-```
+- Treat this as one phase per session. Finish a phase, verify it, then start a fresh session/context for the next one rather than carrying a long history forward.
+- **Only do the single phase you were explicitly given in the current message.** Even if you come across something that looks like a multi-phase plan or a numbered list of future work — in this repo or anywhere else — don't treat it as standing permission to keep going on your own. Finish what you were asked, report back, and stop.
+- For anything touching more than one file or the data model, write a short plan first and check it against the relevant doc before editing code.
+- Prefer showing real output (the verification script's result, a route list, a diff) over describing what you did.
 
-The dev server runs on **port 3000** with `host: true` (accessible on the local network).
+## Using find-skills (optional)
 
-## Architecture
+If `find-skills` or an equivalent skill-discovery tool is available, invoke it narrowly — not before every phase.
 
-### App shell & providers (`src/App.tsx`, `src/main.tsx`)
-- `main.tsx` renders `<App />` into `#root` via `createRoot` under `<StrictMode>`.
-- `App.tsx` creates a `QueryClient` (staleTime 5 min, gcTime 30 min, retry 1, no refetch on window focus) and wraps `<AppContent />`.
-- `AppContent` applies theme class to `<html>` and renders `<RouterProvider router={router} />`.
-- A `ThemeProvider` toggles the `dark` class on `document.documentElement`.
+- **Worth checking**: Phase 9 (visual/accessibility) and Phase 11 (local SEO/schema.org) only. Both are genuinely generic, solved problems where a well-vetted skill can outperform one-off code.
+- **Not worth checking**: every other phase. This project is mostly VIVA-specific content plumbing — no skill registry has solved "wire this exact phone number into this exact config shape."
+- **Adoption bar**: a skill only gets used if (1) it clears find-skills' own install-count and source-reputation checks, and (2) nothing it recommends contradicts this file or any doc in `docs/planning/` — especially the no-fake-trust-signals and no-forms rules above. If it conflicts, skip it and say why, even if the skill itself is legitimate and popular. The planning docs are the tiebreaker, always, not the skill's own defaults or examples.
+- **If nothing suitable turns up**: implement directly. A search that found nothing isn't a failure — don't force a mediocre match just because you looked.
 
-### Routing (`src/router.tsx`)
-- React Router DOM 7 `createBrowserRouter`.
-- A single **root route** renders `<Header />` + `<MainLayout>` (containing `<Outlet />`) + `<Footer />`.
-- Child routes: `/` (Home), `/products`, `/products/:slug`, `/cart`, `/checkout`, `/account`, `/configure`, and a `*` catch-all `NotFoundPage`.
-- `MainLayout` wraps `<Outlet />` in a `<Suspense>` with a `PageSkeleton` fallback for lazy-loaded page content.
+## If something is missing or ambiguous
 
-### State management (`src/store/`)
-Two Zustand stores, both persisted to `localStorage` via `persist` + `createJSONStorage`:
-
-- **`uiStore`** (`music-electronics-ui`): theme (`light`/`dark`/`system` + reduced motion), modals/drawer registry (keyed by id), toasts (auto-dismissing), `globalLoading`, `pageTransition`, `scrollLocked` (body-scroll lock with position preservation), and `isOnline`. Exposes slice selectors (`useTheme`, `useDrawers`, `useToasts`, …) and a batched action selector (`useUIActions`). A `toast` convenience object delegates to `getState().addToast()`.
-- **`cartStore`** (`music-electronics-cart`): cart items, computed totals (tax `0.08`, free shipping threshold `150`, default shipping `15`), promo codes (`WELCOME10`, `SYNTH20`, `MODULAR15`), and shipping methods. Exposes memoized selectors (`useCartItems`, `useCartTotal`, …) and `useCartActions`.
-
-**Conventions:**
-- Stores are typed with an explicit interface (`UIState` / `CartStore extends CartState`).
-- `partialize` persists only the fields that need to survive a reload; `onRehydrateStorage` reapplies side effects (re-theme, recalculate totals).
-- Prefer the exported selectors over reading the whole store.
-
-### Data fetching (React Query)
-- A single `QueryClient` lives in `App.tsx`. There is no centralized `useQuery` wrapper yet — pages that fetch product data call `useQuery` directly. Follow the same pattern and reuse the shared `QueryClient` defaults (5 min stale, 1 retry, no refetch on focus).
-
-### Styling
-- **Tailwind CSS 4** via the `@tailwindcss/vite` plugin. The config lives as a Tailwind 4 `@theme` block inside `src/index.css` (using `@import "tailwindcss"`), with CSS variables defined on `:root` for light/dark modes. Note there is **no `tailwind.config.js`** despite `components.json` referencing one — `postcss`/`autoprefixer` are present in devDependencies but are vestigial for the Tailwind 4 v4-via-plugin setup.
-- A **custom color system** using CSS variables exposed on `:root` (light + dark), consumed like `bg-[var(--color-bg-primary)]`, `text-[var(--color-fg-secondary)]`, `border-[var(--color-border-subtle)]`, etc. Avoid raw hex literals in components; pull from `@/lib/tokens`.
-- **Design tokens** (`src/lib/tokens.ts`): a single `tokens` object (`colors`, `typography`, `spacing`, `borderRadius`, `shadows`, `transitions`, `zIndex`, `breakpoints`, `container`, `three`, `animation`, `components`) exported as `as const` with matching types.
-- **`cn()`** (`src/lib/utils.ts`) = `twMerge(clsx(...))` — always use it for conditional class composition.
-- Utility helpers in `utils.ts`: `formatPrice`, `formatPriceWithDecimals`, `slugify`, `truncate`, `generateId`, `debounce`, `throttle`, `clamp`, `lerp`, `mapRange`, `sleep`, `retry`, `isValidEmail/Url`, query-string helpers, `getInitials`, `classNames`.
-
-### 3D / Three.js
-- A `ThreeCanvas` wrapper (`src/components/three/Canvas.tsx`) wraps `@react-three/fiber`'s `<Canvas>` and applies shared camera/lighting/post-processing config from `tokens.three`.
-- Product models live in `src/components/three/models/products/` (`SynthesizerModel`, `MidiControllerModel`, `AudioInterfaceModel`, `EurorackModuleModel`) and are procedural — driven by `ProceduralModelConfig` in `src/types/index.ts`.
-- The hero uses `@react-three/drei`'s `<Stage>` + `environment="city"` + `<ContactShadows>`.
-- Three-specific code uses the `"use client"` directive and is wrapped in `<Suspense>` with a skeleton because model assets load asynchronously.
-
-### Forms
-- `react-hook-form` + `zod` schemas + `@hookform/resolvers/zod`. When adding a new form, define the schema in the component (or a co-located `*.schema.ts`), register fields, and pass `resolver={zodResolver(schema)}`.
-
-### Component conventions
-- Components are **named function declarations**, exported as named exports: `export function Button() {}`.
-- Presentational components sit in `src/components/ui/`; domain sections in `src/components/sections/`; structural pieces in `src/components/layout/`.
-- 3D/interactive components carry `"use client"`.
-- `lucide-react` icons are imported as named imports.
-
-## Code Style
-
-- **TypeScript** (`tsconfig.app.json`): `strict`, `noImplicitAny`, `strictNullChecks`, `verbatimModuleSyntax`, `moduleResolution: "bundler"`, `allowImportingTsExtensions`. `noUnusedLocals`/`noUnusedParameters` are **off** (relaxed for development).
-- **Imports:** type imports use `import type { ... }` or inline `type` qualifiers; runtime imports use bare module specifiers. Prefer `@/` path alias imports over relative `..` paths.
-- **Components:** named function components, named exports, PascalCase file names matching the component (`Header.tsx` → `Header`).
-- **Class names:** always compose with `cn(...)`; pull colors/spacing from design tokens, never magic hex values.
-- **Oxlint:** `npx oxlint` / `npm run lint`. Rules enforced: `react/rules-of-hooks` (error), `react/only-export-components` (warn). Run before committing.
-
-## Testing
-
-There is no test runner or test files configured in this project yet (`package.json` has no `test` script, and no files under `src/` match `*.test.*` / `*.spec.*`). When adding tests, a recommended starting point is:
-
-- **Unit:** Vitest + React Testing Library (`vitest`, `@testing-library/react`, `@testing-library/jest-dom`).
-- **3D:** `@react-three/test-renderer` or `@testing-library/react` with mocked `three`/canvas (the canvas needs an offscreen canvas mock under jsdom).
-- **E2E:** Playwright (`@playwright/test`) for the full shopping flow (browse → cart → checkout).
-
-## Build & Production
-
-- `npm run build` runs `tsc -b` (type-check across both project references) then `vite build`.
-- Vite is configured with `manualChunks` to split the bundle into `three`, `vendor` (React/React-DOM/router/Zustand/Query), `ui` (framer-motion/lucide/clsx/tailwind-merge/cva), and `forms` (react-hook-form/Zod/resolvers) chunks.
-- Output target is `es2022` with `esbuild` minification and CSS minification enabled.
-
-## Project Notes
-
-- The `@` directory at the `music-electronics-shop` repo root (containing `components/ui/select.tsx`) is a stray `shadcn/ui` install artifact and is **not** referenced by the app (imports use the `@/` alias to `src/`). Safe to remove.
-- The `@hooks/*` and `@data/*` aliases are declared but have no backing directories yet — add modules under `src/hooks/` and `src/data/` if/when those features are needed.
-- `.mcp.json` at the repository root configures MCP servers (filesystem, Chrome DevTools, Playwright, GitHub, Context7, 21st, MagicUI, shadcn). Adjust as needed for your environment; it is not read by the app build.
+Stop and ask the person rather than proceeding on a best guess. This applies especially to anything listed in the Open Items Log (`03-viva-business-context.md` §8) or the "needs your confirmation" list (`04-viva-website-architecture.md`, end of file). Those two lists exist specifically to catch this — check them before assuming a gap is safe to fill in yourself.
