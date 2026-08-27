@@ -4,14 +4,15 @@ import { getCategorySummaries } from "@/data/products"
 import { BUSINESS_CONFIG } from "@/config/business"
 
 const SUPPORT_LINKS = [
-  { label: "Audio Consultation", href: "/products" },
-  { label: "Installation & Tuning", href: "/products" },
-  { label: "Repairs & Upgrades", href: "/products" },
-  { label: "Contact Us", href: "/products" },
+  { label: "Complete Solutions", href: "/services#complete-audio-solutions" },
+  { label: "Installation & Tuning", href: "/services#installation-integration" },
+  { label: "Repair & Diagnosis", href: "/services#repair-diagnosis" },
+  { label: "Custom Audio Builds", href: "/services#custom-solutions" },
 ]
 
 const COMPANY_LINKS = [
   { label: `About ${BUSINESS_CONFIG.name}`, href: "/" },
+  { label: "Services", href: "/services" },
   { label: "Products", href: "/products" },
 ]
 

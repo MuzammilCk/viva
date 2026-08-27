@@ -30,8 +30,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             <AlertTriangleIcon className="size-8 text-warning" />
             <h1 className="font-display text-2xl">Something went wrong</h1>
             <p className="max-w-md text-muted-foreground">
-              An unexpected error occurred while rendering this section. Your cart and saved
-              items are safe.
+              An unexpected error occurred while loading this page. Please try refreshing or return to the home page.
             </p>
             <Button onClick={() => this.setState({ hasError: false })} variant="outline">
               Try again

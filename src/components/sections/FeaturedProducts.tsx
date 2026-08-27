@@ -13,19 +13,19 @@ export function FeaturedProducts() {
         <div className="flex items-end justify-between gap-4 pb-10">
           <div>
             <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
-              Hand-picked this month
+              Curated Equipment
             </p>
-            <h2 id="featured-heading" className="font-display pt-1 text-3xl tracking-tight sm:text-4xl">
-              Featured gear
+            <h2 id="featured-heading" className="font-display pt-1 text-3xl font-semibold tracking-tight sm:text-4xl">
+              Featured audio components
             </h2>
           </div>
           <Button variant="outline" size="sm" render={<Link to="/products" />}>
-            All products
+            All equipment
             <ArrowRightIcon data-icon="inline-end" />
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

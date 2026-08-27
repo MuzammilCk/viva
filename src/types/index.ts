@@ -139,6 +139,7 @@ export interface Service {
   summary: string
   description: string
   applicableEnvironments: string[]
+  matchingProjectCategories?: ProjectCategory[]
   relatedProjectIds?: string[]
   ctaLabel?: string
   ctaMessage?: string
@@ -152,11 +153,11 @@ export interface Service {
 export type ProductCategory =
   | "Speakers"
   | "Amplifiers"
-  | "Subwoofers"
+  | "Woofers/Subwoofers"
   | "Tweeters"
   | "Microphones"
   | "Wiring & Accessories"
-  | "Other Components"
+  | "Other"
 
 export interface ProductSpecification {
   category?: string
