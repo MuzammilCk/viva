@@ -104,7 +104,12 @@ export function ProjectDetailPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               {project.media.map((item, idx) => (
                 <div key={idx} className="aspect-[4/3] overflow-hidden rounded-xl bg-card">
-                  <img src={item.url} alt={item.alt || project.title} className="h-full w-full object-cover" />
+                  <img
+                    src={item.url}
+                    alt={item.alt || project.title}
+                    loading="lazy"
+                    className="h-full w-full object-cover"
+                  />
                 </div>
               ))}
             </div>

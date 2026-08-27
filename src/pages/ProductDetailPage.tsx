@@ -76,6 +76,7 @@ export function ProductDetailPage() {
                 <img
                   src={product.images[0]}
                   alt={product.name}
+                  loading="lazy"
                   className="h-full w-full rounded-lg object-cover"
                 />
               ) : (

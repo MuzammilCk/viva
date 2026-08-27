@@ -12,11 +12,11 @@ export function ErrorPage() {
   return (
     <div className="container-page flex min-h-[70vh] flex-col items-center justify-center gap-5 py-24 text-center">
       <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
-        Something broke
+        Error
       </p>
-      <h1 className="font-display text-4xl tracking-tight sm:text-5xl">{message}</h1>
+      <h1 className="font-display text-4xl tracking-tight sm:text-5xl text-foreground">{message}</h1>
       <p className="max-w-md text-muted-foreground">
-        The stage went quiet. Head back to the shop and keep playing.
+        An error occurred while loading this page. Please return to the home page or try again.
       </p>
       <div className="flex gap-3">
         <Button onClick={() => navigate("/")}>Back to home</Button>

@@ -7,14 +7,18 @@ export function NotFoundPage() {
       <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
         404
       </p>
-      <h1 className="font-display text-4xl tracking-tight sm:text-5xl">
-        This patch doesn&rsquo;t exist
+      <h1 className="font-display text-4xl tracking-tight sm:text-5xl text-foreground">
+        Page not found
       </h1>
       <p className="max-w-md text-muted-foreground">
-        The page you&rsquo;re looking for was moved, unplugged, or never patched in the first
-        place.
+        The page you are looking for doesn&rsquo;t exist or may have been moved.
       </p>
-      <Button render={<Link to="/products" />}>Browse the shop</Button>
+      <div className="flex flex-wrap items-center justify-center gap-3">
+        <Button render={<Link to="/" />}>Back to home</Button>
+        <Button variant="outline" render={<Link to="/services" />}>
+          View services
+        </Button>
+      </div>
     </div>
   )
 }
