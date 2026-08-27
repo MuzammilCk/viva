@@ -11,9 +11,11 @@ const SUPPORT_LINKS = [
 ]
 
 const COMPANY_LINKS = [
-  { label: `About ${BUSINESS_CONFIG.name}`, href: "/" },
+  { label: `About ${BUSINESS_CONFIG.name}`, href: "/about" },
+  { label: "Projects", href: "/projects" },
   { label: "Services", href: "/services" },
   { label: "Products", href: "/products" },
+  { label: "Contact", href: "/contact" },
 ]
 
 export function Footer() {

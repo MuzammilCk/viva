@@ -3,6 +3,7 @@ import { Outlet, useLocation } from "react-router-dom"
 import { useEffect } from "react"
 import { Header } from "@/components/layout/Header"
 import { Footer } from "@/components/layout/Footer"
+import { StickyContactBar } from "@/components/layout/StickyContactBar"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -33,7 +34,7 @@ function ScrollToTop() {
 
 export function MainLayout() {
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col pb-16 sm:pb-0">
       <ScrollToTop />
       <Header />
       <a
@@ -50,6 +51,7 @@ export function MainLayout() {
         </ErrorBoundary>
       </main>
       <Footer />
+      <StickyContactBar />
     </div>
   )
 }

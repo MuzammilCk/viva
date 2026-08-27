@@ -23,8 +23,11 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/s
 
 const NAV_LINKS = [
   { label: "Home", to: "/" },
+  { label: "Projects", to: "/projects" },
   { label: "Services", to: "/services" },
   { label: "Products", to: "/products" },
+  { label: "About", to: "/about" },
+  { label: "Contact", to: "/contact" },
 ]
 
 export function Header() {
