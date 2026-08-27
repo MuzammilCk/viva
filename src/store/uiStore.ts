@@ -8,9 +8,6 @@ interface UIState {
   theme: Theme
   setTheme: (theme: Theme) => void
 
-  cartOpen: boolean
-  setCartOpen: (open: boolean) => void
-
   announcementDismissed: boolean
   dismissAnnouncement: () => void
 
@@ -34,9 +31,6 @@ export const useUIStore = create<UIState>()(
         applyTheme(theme)
       },
 
-      cartOpen: false,
-      setCartOpen: (cartOpen) => set({ cartOpen }),
-
       announcementDismissed: false,
       dismissAnnouncement: () => set({ announcementDismissed: true }),
 
@@ -44,7 +38,7 @@ export const useUIStore = create<UIState>()(
       setIsOnline: (isOnline) => set({ isOnline }),
     }),
     {
-      name: "synthlab-ui",
+      name: "viva-ui",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         theme: state.theme,
@@ -63,7 +57,6 @@ export const useUIActions = () =>
   useUIStore(
     useShallow((state) => ({
       setTheme: state.setTheme,
-      setCartOpen: state.setCartOpen,
       dismissAnnouncement: state.dismissAnnouncement,
       setIsOnline: state.setIsOnline,
     }))

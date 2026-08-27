@@ -1,40 +1,167 @@
-export type ProductCategory =
-  | "Synthesizers"
-  | "Controllers"
-  | "Audio Interfaces"
-  | "Eurorack Modular"
-  | "Accessories"
+/**
+ * VIVA Business Team — Core Type Definitions
+ *
+ * Content entities and shared data contracts for the VIVA website.
+ * Grounded in: docs/planning/04-viva-website-architecture.md
+ */
 
-export type ProductArtKind =
-  | "synthesizer"
-  | "controller"
-  | "interface"
-  | "modular"
-  | "accessory"
+// ============================================================================
+// 1. Business Configuration Entity (Single source of truth)
+// ============================================================================
+
+export interface BusinessPhone {
+  readonly number: string
+  readonly display: string
+  readonly tel: string
+}
+
+export interface BusinessWhatsApp {
+  readonly number: string
+  readonly display: string
+  readonly url: string
+  readonly defaultMessage: string
+}
+
+export interface BusinessAddress {
+  readonly town: string
+  readonly district: string
+  readonly state: string
+  readonly pincode: string
+  readonly full: string
+}
+
+export interface BusinessHours {
+  readonly days: string
+  readonly summary: string
+  /** Exact open time (e.g. "09:00") — null until confirmed per 03-viva-business-context.md */
+  readonly openTime: string | null
+  /** Exact close time (e.g. "21:00") — null until confirmed per 03-viva-business-context.md */
+  readonly closeTime: string | null
+  readonly isConfirmed: boolean
+}
+
+export interface SocialLinks {
+  /** Instagram link — null until account is created */
+  readonly instagram: string | null
+  /** Facebook link — null until account is created */
+  readonly facebook: string | null
+  /** YouTube link — null until account is created */
+  readonly youtube: string | null
+}
+
+export interface GoogleBusinessProfile {
+  /** GBP link — null until profile is set up */
+  readonly url: string | null
+  readonly isConfirmed: boolean
+}
+
+export interface BrandTokens {
+  /** Confirmed hex code — null (general direction is Blue, hex unconfirmed) */
+  readonly primaryColorHex: string | null
+  /** Provisional CSS color token used until hex is finalized */
+  readonly provisionalColorName: "blue"
+  /** Logo asset path — null until logo is designed */
+  readonly logoUrl: string | null
+  /** Typography choice — null until decided */
+  readonly typeface: string | null
+}
+
+export interface BusinessConfig {
+  /** Public-facing brand name used across all pages, headings, and CTAs */
+  readonly name: string
+  /** Registered legal/trade name — appears ONLY in legal/footer fine print and structured data */
+  readonly legalName: string
+  readonly legalNotice: string
+  readonly tagline: string
+  readonly description: string
+  readonly domain: string | null
+  readonly email: string | null
+  readonly contact: {
+    readonly phone: BusinessPhone
+    readonly whatsapp: BusinessWhatsApp
+    readonly address: BusinessAddress
+  }
+  readonly hours: BusinessHours
+  readonly social: SocialLinks
+  readonly googleBusinessProfile: GoogleBusinessProfile
+  readonly brand: BrandTokens
+}
+
+/** Alias for backward compatibility / architecture alignment */
+export type SiteConfig = BusinessConfig
+
+// ============================================================================
+// 2. Project Entity
+// ============================================================================
+
+export type ProjectCategory =
+  | "Vehicles"
+  | "Home & Theatre"
+  | "Cafés & Restaurants"
+  | "Commercial & Business"
+  | "Custom Work"
+  | "Repair & Restoration"
+  | "Other"
+
+export interface ProjectMedia {
+  id?: string
+  url: string
+  type: "image" | "video"
+  alt?: string
+  caption?: string
+}
+
+export interface Project {
+  id: string
+  slug: string
+  title: string
+  category: ProjectCategory | string
+  environmentTags: string[]
+  summary: string
+  requirement?: string
+  solution?: string
+  componentsUsed?: string[]
+  media: ProjectMedia[]
+  coverImage?: string
+  relatedProductIds?: string[]
+  featured: boolean
+  order: number
+}
+
+// ============================================================================
+// 3. Service Entity
+// ============================================================================
+
+export interface Service {
+  id: string
+  slug: string
+  name: string
+  summary: string
+  description: string
+  applicableEnvironments: string[]
+  relatedProjectIds?: string[]
+  ctaLabel?: string
+  ctaMessage?: string
+  order: number
+}
+
+// ============================================================================
+// 4. Product Entity (Redefined — catalog only, no cart/stock/variants)
+// ============================================================================
+
+export type ProductCategory =
+  | "Speakers"
+  | "Amplifiers"
+  | "Subwoofers"
+  | "Tweeters"
+  | "Microphones"
+  | "Wiring & Accessories"
+  | "Other Components"
 
 export interface ProductSpecification {
-  category: string
+  category?: string
   name: string
   value: string
-}
-
-export interface ProductVariant {
-  id: string
-  name: string
-  sku: string
-  price: number
-  salePrice?: number
-  inStock: boolean
-  stockCount?: number
-  attributes: Record<string, string>
-}
-
-export interface ProductFinish {
-  id: string
-  name: string
-  body: string
-  panel: string
-  accent: string
 }
 
 export interface Product {
@@ -42,220 +169,21 @@ export interface Product {
   slug: string
   name: string
   brand: string
-  category: ProductCategory
-  subcategory: string
-  price: number
-  salePrice?: number
-  badge?: string
-  description: string
-  shortDescription: string
+  model: string
+  category: ProductCategory | string
+  /** Genuine price in INR, or null for "Contact for price" */
+  price: number | null
+  description?: string
   specs: ProductSpecification[]
-  features: string[]
-  inTheBox: string[]
-  artKind: ProductArtKind
-  finishes: ProductFinish[]
+  useCases: string[]
+  images: string[]
+  relatedProjectIds?: string[]
   featured: boolean
-  rating: number
-  reviewCount: number
-  variants: ProductVariant[]
 }
 
-export interface ProductFilters {
-  categories?: ProductCategory[]
-  minPrice?: number
-  maxPrice?: number
-  inStockOnly?: boolean
-  onSaleOnly?: boolean
-  search?: string
-}
-
-export interface ProductSortOption {
-  id: "featured" | "price-asc" | "price-desc" | "name" | "rating"
-  label: string
-}
-
-export interface PaginatedProducts {
-  items: Product[]
-  total: number
-  page: number
-  pageSize: number
-  totalPages: number
-}
-
-export interface CartItem {
-  id: string
-  productId: string
-  variantId: string
-  quantity: number
-  configuration?: ProductConfiguration
-  addedAt: string
-}
-
-export interface ProductConfiguration {
-  finishId?: string
-  notes?: string
-}
-
-export interface CartState {
-  items: CartItem[]
-  itemCount: number
-  subtotal: number
-  tax: number
-  shipping: number
-  discount: number
-  total: number
-  currency: string
-  promoCode?: string
-  shippingMethod?: ShippingMethod
-}
-
-export interface ShippingMethod {
-  id: string
-  name: string
-  description: string
-  price: number
-  estimatedDays: string
-  freeThreshold?: number
-}
-
-export interface User {
-  id: string
-  firstName: string
-  lastName: string
-  email: string
-  phone?: string
-  avatar?: string
-  addresses: Address[]
-  paymentMethods: PaymentMethod[]
-  createdAt: string
-}
-
-export interface Address {
-  id: string
-  type: "shipping" | "billing"
-  isDefault: boolean
-  firstName: string
-  lastName: string
-  company?: string
-  street1: string
-  street2?: string
-  city: string
-  state: string
-  postalCode: string
-  country: string
-}
-
-export interface PaymentMethod {
-  id: string
-  type: "card" | "paypal" | "bank"
-  isDefault: boolean
-  last4?: string
-  brand?: string
-  expiryMonth?: number
-  expiryYear?: number
-}
-
-export interface SavedConfiguration {
-  id: string
-  productId: string
-  name: string
-  configuration: ProductConfiguration
-  savedAt: string
-}
-
-export type OrderStatus =
-  | "pending"
-  | "processing"
-  | "shipped"
-  | "delivered"
-  | "cancelled"
-  | "refunded"
-
-export type PaymentStatus = "pending" | "paid" | "failed" | "refunded"
-
-export interface OrderItem {
-  productId: string
-  variantId: string
-  name: string
-  sku: string
-  quantity: number
-  unitPrice: number
-}
-
-export interface Order {
-  id: string
-  orderNumber: string
-  status: OrderStatus
-  items: OrderItem[]
-  subtotal: number
-  tax: number
-  shipping: number
-  discount: number
-  total: number
-  shippingAddress: Address
-  billingAddress?: Address
-  paymentStatus: PaymentStatus
-  createdAt: string
-  estimatedDelivery?: string
-  trackingNumber?: string
-}
-
-export interface CheckoutState {
-  step: CheckoutStep
-  order?: Order
-}
-
-export type CheckoutStep =
-  | "information"
-  | "shipping"
-  | "payment"
-  | "review"
-  | "confirmation"
-
-export interface ApiResponse<T> {
-  data: T
-  success: boolean
-  message?: string
-}
-
-export interface ApiError {
-  code: string
-  message: string
-  details?: Record<string, string[]>
-}
-
-export interface PaginationParams {
-  page?: number
-  pageSize?: number
-}
-
-export interface AnalyticsEvent {
-  name: string
-  properties?: Record<string, string | number | boolean>
-  timestamp?: string
-}
-
-export interface SiteConfig {
-  name: string
-  tagline: string
-  description: string
-  url: string
-  email: string
-  phone: string
-  address: {
-    street: string
-    city: string
-    state: string
-    postalCode: string
-    country: string
-  }
-  social: {
-    twitter?: string
-    instagram?: string
-    youtube?: string
-    github?: string
-  }
-}
+// ============================================================================
+// 5. Navigation & Analytics
+// ============================================================================
 
 export type NavChild = {
   label: string
@@ -267,4 +195,10 @@ export type NavItem = {
   label: string
   href: string
   children?: NavChild[]
+}
+
+export interface AnalyticsEvent {
+  name: string
+  properties?: Record<string, string | number | boolean>
+  timestamp?: string
 }

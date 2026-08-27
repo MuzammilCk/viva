@@ -3,7 +3,6 @@ import { Outlet, useLocation } from "react-router-dom"
 import { useEffect } from "react"
 import { Header } from "@/components/layout/Header"
 import { Footer } from "@/components/layout/Footer"
-import { CartSheet } from "@/components/shop/CartSheet"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -51,7 +50,6 @@ export function MainLayout() {
         </ErrorBoundary>
       </main>
       <Footer />
-      <CartSheet />
     </div>
   )
 }

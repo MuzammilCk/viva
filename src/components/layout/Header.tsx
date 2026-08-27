@@ -2,17 +2,14 @@ import { useState } from "react"
 import { Link, NavLink } from "react-router-dom"
 import {
   ChevronDownIcon,
-  HeartIcon,
   MenuIcon,
   MoonIcon,
-  ShoppingBagIcon,
   SunIcon,
   XIcon,
 } from "lucide-react"
 import { useUIStore, useUIActions, type Theme } from "@/store/uiStore"
-import { useCartCount } from "@/store/cartStore"
-import { useWishlistCount } from "@/store/wishlistStore"
 import { getCategorySummaries } from "@/data/products"
+import { BUSINESS_CONFIG } from "@/config/business"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -27,7 +24,6 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/s
 const NAV_LINKS = [
   { label: "Home", to: "/" },
   { label: "Products", to: "/products" },
-  { label: "Account", to: "/account" },
 ]
 
 export function Header() {
@@ -40,7 +36,7 @@ export function Header() {
         <div className="bg-primary text-primary-foreground">
           <div className="container-page flex items-center justify-center gap-2 py-1.5 text-xs sm:text-sm">
             <p>
-              Free standard shipping on orders over $150 · 30-day returns · 2-year warranty
+              Direct audio solutions &amp; installation in Kottakkal · Call {BUSINESS_CONFIG.contact.phone.display} · WhatsApp {BUSINESS_CONFIG.contact.whatsapp.display}
             </p>
             <button
               type="button"
@@ -68,9 +64,9 @@ function HeaderNav() {
       <Link
         to="/"
         className="flex items-baseline gap-1 text-xl font-semibold tracking-tight"
-        aria-label="SynthLab home"
+        aria-label={`${BUSINESS_CONFIG.name} home`}
       >
-        SynthLab<span className="text-primary">.</span>
+        {BUSINESS_CONFIG.name}<span className="text-primary">.</span>
       </Link>
 
       <div className="hidden items-center gap-1 md:flex">
@@ -80,8 +76,6 @@ function HeaderNav() {
 
       <div className="flex items-center gap-0.5">
         <ThemeToggle />
-        <WishlistLink />
-        <CartButton />
       </div>
     </nav>
   )
@@ -90,7 +84,7 @@ function HeaderNav() {
 function DesktopLinks() {
   return (
     <>
-      {NAV_LINKS.filter((link) => link.label !== "Account").map((link) => (
+      {NAV_LINKS.map((link) => (
         <NavLink
           key={link.to}
           to={link.to}
@@ -152,40 +146,6 @@ function ThemeToggle() {
       title={`Theme: ${theme}`}
     >
       {theme === "dark" ? <MoonIcon className="size-4.5" /> : <SunIcon className="size-4.5" />}
-    </Button>
-  )
-}
-
-function WishlistLink() {
-  const count = useWishlistCount()
-  return (
-    <Button
-      variant="ghost"
-      size="icon"
-      aria-label={`Wishlist (${count} saved)`}
-      render={<Link to="/account" state={{ tab: "wishlist" }} className="relative" />}
-    >
-      <HeartIcon className="size-4.5" />
-      {count > 0 && (
-        <span className="tnum absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
-          {count}
-        </span>
-      )}
-    </Button>
-  )
-}
-
-function CartButton() {
-  const count = useCartCount()
-  const { setCartOpen } = useUIActions()
-  return (
-    <Button variant="ghost" size="icon" aria-label={`Open cart (${count} items)`} onClick={() => setCartOpen(true)} className="relative">
-      <ShoppingBagIcon className="size-4.5" />
-      {count > 0 && (
-        <span className="tnum absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
-          {count}
-        </span>
-      )}
     </Button>
   )
 }
